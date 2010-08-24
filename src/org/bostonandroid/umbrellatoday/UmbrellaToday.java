@@ -101,7 +101,7 @@ public class UmbrellaToday extends Activity
             return null;
           }
 
-          return response.getHeaders("Location")[0].getValue() + ".txt";
+          return response.getHeaders("Location")[0].getValue() + ".xml";
         } catch (Exception e) {
           postRequest.abort();
         }
