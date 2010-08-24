@@ -40,7 +40,7 @@ public class UmbrellaForToday extends Activity
     private class ReportRetriever extends AsyncTask<String, Void, Report> {
       @Override
       protected Report doInBackground(String... urls) {
-        if (urls.length >= 1) {
+        if (urls.length > 0) {
           return retrieveReport(urls[0]);
         }
 

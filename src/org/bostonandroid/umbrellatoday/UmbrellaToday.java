@@ -12,16 +12,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpResponse;
-import java.util.List;
-import java.util.ArrayList;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
 import android.content.Intent;
 import android.view.MenuInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import org.apache.http.Header;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
 public class UmbrellaToday extends Activity
 {
@@ -39,7 +37,11 @@ public class UmbrellaToday extends Activity
 
         goButton.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) {
-            getUmbrellaTodayResource(location.getText().toString());
+            String locationText = location.getText().toString();
+            if (locationText.length() > 0) {
+              ResourceRetriever r = new ResourceRetriever();
+              r.execute(locationText);
+            }
           }
         });
     }
@@ -63,15 +65,10 @@ public class UmbrellaToday extends Activity
       }
     }
 
-    private void getUmbrellaTodayResource(String location) {
-      ResourceRetriever r = new ResourceRetriever();
-      r.execute(location);
-    }
-
     private class ResourceRetriever extends AsyncTask<String, Void, Uri> {
       @Override
       protected Uri doInBackground(String... locations) {
-        if (locations.length >= 1) {
+        if (locations.length > 0) {
           return retrieveResource(locations[0]);
         }
 
@@ -95,23 +92,37 @@ public class UmbrellaToday extends Activity
         postRequest.addHeader("Accept", "text/xml");
         postRequest.addHeader("Content-Type", "text/xml");
 
+        StringEntity requestEntity = null;
+
         try {
-          postRequest.setEntity(new StringEntity("<forecast><location-name>"+location+"</location-name></forecast>"));
-          HttpResponse response = client.execute(postRequest);
-          final int statusCode = response.getStatusLine().getStatusCode();
-          if (statusCode != HttpStatus.SC_CREATED) {
-            Log.w(TAG, "Error " + statusCode + " retrieving UmbrellaToday resource.");
-            return null;
-          }
-
-          Header redirectLocation = response.getFirstHeader("Location");
-          if (redirectLocation != null) {
-            return Uri.parse(redirectLocation.getValue() + ".xml");
-          }
-
-        } catch (Exception e) {
+          requestEntity = new StringEntity("<forecast><location-name>"+location+"</location-name></forecast>");
+        } catch (UnsupportedEncodingException e) {
           postRequest.abort();
+          return null;
         }
+
+        postRequest.setEntity(requestEntity);
+
+        HttpResponse response = null;
+
+        try {
+          response = client.execute(postRequest);
+        } catch (IOException e) {
+          postRequest.abort();
+          return null;
+        }
+
+        final int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != HttpStatus.SC_CREATED) {
+          Log.w(TAG, "Error " + statusCode + " retrieving resource.");
+          return null;
+        }
+
+        Header redirectLocation = response.getFirstHeader("Location");
+        if (redirectLocation != null) {
+          return Uri.parse(redirectLocation.getValue() + ".xml");
+        }
+
         return null;
       }
 
