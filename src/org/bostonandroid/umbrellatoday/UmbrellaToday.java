@@ -18,6 +18,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.StringEntity;
 import android.content.Intent;
+import android.view.MenuInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class UmbrellaToday extends Activity
 {
@@ -41,6 +44,26 @@ public class UmbrellaToday extends Activity
             getUmbrellaTodayResource(location.getText().toString());
           }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.main_menu, menu);
+      return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      // Handle item selection
+      switch (item.getItemId()) {
+      case R.id.about:
+        Intent intent = new Intent(UmbrellaToday.this, AboutUmbrellaToday.class);
+        startActivity(intent);
+       return true;
+      default:
+        return super.onOptionsItemSelected(item);
+      }
     }
 
     private void getUmbrellaTodayResource(String location) {

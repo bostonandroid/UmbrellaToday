@@ -3,18 +3,12 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/umbrella"
     >
-  <EditText  
+  <TextView  
       android:layout_width="fill_parent" 
       android:layout_height="wrap_content" 
-      android:id="@+id/location"
-      android:singleLine="true"
+      android:id="@+id/about"
+      android:text="Copyright 2010 Boston Android"
       />
-  <Button android:id="@+id/button"
-          android:layout_height="wrap_content"
-          android:layout_width="fill_parent"
-          android:text="Go"
-    />
 </LinearLayout>
 
