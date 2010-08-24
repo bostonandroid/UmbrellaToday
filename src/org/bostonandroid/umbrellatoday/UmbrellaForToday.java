@@ -33,6 +33,7 @@ public class UmbrellaForToday extends Activity
         Uri reportUri = intent.getData();
 
         ReportRetriever r = new ReportRetriever();
+        // FIXME: ReportRetriever will bail if this activity was started without an intent
         r.execute(reportUri);
     }
 
@@ -45,8 +46,10 @@ public class UmbrellaForToday extends Activity
         if (report != null) {
           TextView tv = (TextView)findViewById(R.id.report);
           tv.setText(report.getLocationName() + ": " + report.getAnswer());
+          // TODO: Get activity title from strings.xml, also do something if location[name] is null
+          setTitle("UmbrellaToday for " + report.getLocationName());
         }
-        // else bounce back to UmbrellaToday activity with an error message
+        // TODO: else bounce back to UmbrellaToday activity with an error message
       }
 
       private Report retrieveReport(Uri uri) {
@@ -79,8 +82,6 @@ public class UmbrellaForToday extends Activity
           HttpEntity entity = response.getEntity();
 
           if (entity != null) {
-            //ReportHandler handler = new ReportHandler();
-          
             Xml.parse(entity.getContent(), Xml.Encoding.UTF_8, root.getContentHandler());
 
             return report;
