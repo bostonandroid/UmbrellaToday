@@ -14,7 +14,7 @@
         <activity android:name="UmbrellaForToday"
           android:label="@string/app_name" />
         <activity android:name="AboutUmbrellaToday"
-          android:label="@string/app_name" />
+          android:label="@string/about_umbrella_today" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-sdk android:minSdkVersion="4" />

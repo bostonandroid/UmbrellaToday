@@ -7,16 +7,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import android.net.Uri;
 import android.widget.TextView;
 import android.util.Log;
 import org.apache.http.HttpEntity;
-import java.io.ByteArrayOutputStream;
 import android.content.Intent;
 import android.util.Xml;
 import android.sax.RootElement;
 import android.sax.Element;
 import android.sax.EndTextElementListener;
+import java.io.InputStream;
+import java.io.IOException;
+import org.xml.sax.SAXException;
 
 public class UmbrellaForToday extends Activity
 {
@@ -30,17 +31,20 @@ public class UmbrellaForToday extends Activity
         setContentView(R.layout.today);
 
         Intent intent = getIntent();
-        Uri reportUri = intent.getData();
+        String reportUrl = intent.getDataString();
 
         ReportRetriever r = new ReportRetriever();
-        // FIXME: ReportRetriever will bail if this activity was started without an intent
-        r.execute(reportUri);
+        r.execute(reportUrl);
     }
 
-    private class ReportRetriever extends AsyncTask<Uri, Void, Report> {
+    private class ReportRetriever extends AsyncTask<String, Void, Report> {
       @Override
-      protected Report doInBackground(Uri... uris) {
-        return retrieveReport(uris[0]);
+      protected Report doInBackground(String... urls) {
+        if (urls.length >= 1) {
+          return retrieveReport(urls[0]);
+        }
+
+        return null;
       }
 
       @Override
@@ -49,53 +53,72 @@ public class UmbrellaForToday extends Activity
           TextView tv = (TextView)findViewById(R.id.report);
           tv.setText(report.getAnswer().toUpperCase());
           // TODO: Get activity title from strings.xml, also do something if location[name] is null
-          setTitle("UmbrellaToday for " + report.getLocationName());
+          setTitle("Umbrella Today for " + report.getLocationName());
         }
         else {
           finish();
         }
-        // TODO: else bounce back to UmbrellaToday activity with an error message
       }
 
-      private Report retrieveReport(Uri uri) {
+      private Report retrieveReport(String uri) {
         final DefaultHttpClient client = new DefaultHttpClient();
-        final HttpGet getRequest = new HttpGet(uri.toString());
-        final Report report = new Report();
+        final HttpGet getRequest = new HttpGet(uri);
 
-        // http://www.ibm.com/developerworks/library/x-android/
-        RootElement root = new RootElement("forecast");
-        root.getChild("answer").setEndTextElementListener(new EndTextElementListener() {
-          public void end(String body) {
-            report.setAnswer(body);
-          }
-        });
-        Element location = root.getChild("location");
-        location.getChild("name").setEndTextElementListener(new EndTextElementListener() {
-          public void end(String body) {
-            report.setLocationName(body);
-          }
-        });
+        HttpResponse response = null;
 
         try {
-          HttpResponse response = client.execute(getRequest);
+          response = client.execute(getRequest);
+        } catch (IOException e) {
+          getRequest.abort();
+          return null;
+        }
 
-          final int statusCode = response.getStatusLine().getStatusCode();
-          if (statusCode != HttpStatus.SC_OK) {
-            Log.w(TAG, "Error " + statusCode + " retrieving weather report.");
+        final int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != HttpStatus.SC_OK) {
+          Log.w(TAG, "Error " + statusCode + " retrieving weather report.");
+          return null;
+        }
+
+        final HttpEntity entity = response.getEntity();
+
+        if (entity != null) {
+          InputStream content = null;
+
+          try {
+            content = entity.getContent();
+          } catch (IOException e) {
+            return null;
+          } catch (IllegalStateException e) {
             return null;
           }
 
-          HttpEntity entity = response.getEntity();
+          final Report report = new Report();
 
-          if (entity != null) {
-            Xml.parse(entity.getContent(), Xml.Encoding.UTF_8, root.getContentHandler());
+          // http://www.ibm.com/developerworks/library/x-android/
+          RootElement root = new RootElement("forecast");
+          root.getChild("answer").setEndTextElementListener(new EndTextElementListener() {
+            public void end(String body) {
+              report.setAnswer(body);
+            }
+          });
+          Element location = root.getChild("location");
+          location.getChild("name").setEndTextElementListener(new EndTextElementListener() {
+            public void end(String body) {
+              report.setLocationName(body);
+            }
+          });
 
-            return report;
+          try {
+            Xml.parse(content, Xml.Encoding.UTF_8, root.getContentHandler());
+          } catch (IOException e) {
+            return null;
+          } catch (SAXException e) {
+            return null;
           }
 
-        } catch (Exception e) {
-          getRequest.abort();
+          return report;
         }
+
         return null;
       }
     }

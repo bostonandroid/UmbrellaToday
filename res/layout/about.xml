@@ -8,7 +8,7 @@
       android:layout_width="fill_parent" 
       android:layout_height="wrap_content" 
       android:id="@+id/about"
-      android:text="Copyright 2010 Boston Android"
+      android:text="@string/about_text"
       />
 </LinearLayout>
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">UmbrellaToday</string>
-    <string name="about">About</string>
+    <string name="app_name">Umbrella Today</string>
+    <string name="about_button_text">About</string>
+    <string name="about_umbrella_today">About Umbrella Today</string>
+    <string name="about_text">Copyright 2010 Boston Android</string>
 </resources>

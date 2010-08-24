@@ -39,9 +39,6 @@ public class UmbrellaToday extends Activity
 
         goButton.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) {
-            // ask UT for the resource to load to get the data for the given input
-            // call UmbrellaTodayLocation with the resource
-
             getUmbrellaTodayResource(location.getText().toString());
           }
         });
@@ -56,9 +53,8 @@ public class UmbrellaToday extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-      // Handle item selection
       switch (item.getItemId()) {
-      case R.id.about:
+      case R.id.about_button:
         Intent intent = new Intent(UmbrellaToday.this, AboutUmbrellaToday.class);
         startActivity(intent);
        return true;
@@ -68,27 +64,31 @@ public class UmbrellaToday extends Activity
     }
 
     private void getUmbrellaTodayResource(String location) {
-      UmbrellaTodayResourceRetriever utr = new UmbrellaTodayResourceRetriever();
-      utr.execute(location);
+      ResourceRetriever r = new ResourceRetriever();
+      r.execute(location);
     }
 
-    private class UmbrellaTodayResourceRetriever extends AsyncTask<String, Void, Uri> {
+    private class ResourceRetriever extends AsyncTask<String, Void, Uri> {
       @Override
       protected Uri doInBackground(String... locations) {
-        String weatherUri = postLocationToUmbrellaToday(locations[0]);
-        Log.d(TAG, weatherUri);
-        return Uri.parse(weatherUri);
+        if (locations.length >= 1) {
+          return retrieveResource(locations[0]);
+        }
+
+        return null;
       }
 
       @Override
       protected void onPostExecute(Uri weatherUri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, weatherUri);
-        intent.setClass(UmbrellaToday.this, UmbrellaForToday.class);
+        if (weatherUri != null) {
+          Intent intent = new Intent(Intent.ACTION_VIEW, weatherUri);
+          intent.setClass(UmbrellaToday.this, UmbrellaForToday.class);
 
-        UmbrellaToday.this.startActivity(intent);
+          UmbrellaToday.this.startActivity(intent);
+        }
       }
 
-      private String postLocationToUmbrellaToday(String location) {
+      private Uri retrieveResource(String location) {
         final DefaultHttpClient client = new DefaultHttpClient();
         final HttpPost postRequest = new HttpPost(forecastsUrl());
 
@@ -106,7 +106,7 @@ public class UmbrellaToday extends Activity
 
           Header redirectLocation = response.getFirstHeader("Location");
           if (redirectLocation != null) {
-            return redirectLocation.getValue() + ".xml";
+            return Uri.parse(redirectLocation.getValue() + ".xml");
           }
 
         } catch (Exception e) {
