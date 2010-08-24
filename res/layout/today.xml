@@ -9,6 +9,8 @@
       android:layout_height="wrap_content" 
       android:id="@+id/report"
       android:text="Unknown"
+      android:textSize="48.0sp"
+      android:gravity="center_horizontal"
       />
 </LinearLayout>
 

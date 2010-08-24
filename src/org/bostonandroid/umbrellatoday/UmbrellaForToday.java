@@ -38,16 +38,21 @@ public class UmbrellaForToday extends Activity
     }
 
     private class ReportRetriever extends AsyncTask<Uri, Void, Report> {
+      @Override
       protected Report doInBackground(Uri... uris) {
         return retrieveReport(uris[0]);
       }
 
+      @Override
       protected void onPostExecute(Report report) {
         if (report != null) {
           TextView tv = (TextView)findViewById(R.id.report);
-          tv.setText(report.getLocationName() + ": " + report.getAnswer());
+          tv.setText(report.getAnswer().toUpperCase());
           // TODO: Get activity title from strings.xml, also do something if location[name] is null
           setTitle("UmbrellaToday for " + report.getLocationName());
+        }
+        else {
+          finish();
         }
         // TODO: else bounce back to UmbrellaToday activity with an error message
       }
@@ -57,6 +62,7 @@ public class UmbrellaForToday extends Activity
         final HttpGet getRequest = new HttpGet(uri.toString());
         final Report report = new Report();
 
+        // http://www.ibm.com/developerworks/library/x-android/
         RootElement root = new RootElement("forecast");
         root.getChild("answer").setEndTextElementListener(new EndTextElementListener() {
           public void end(String body) {

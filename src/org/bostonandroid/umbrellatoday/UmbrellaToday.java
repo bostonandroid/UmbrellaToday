@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.view.MenuInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import org.apache.http.Header;
 
 public class UmbrellaToday extends Activity
 {
@@ -72,12 +73,14 @@ public class UmbrellaToday extends Activity
     }
 
     private class UmbrellaTodayResourceRetriever extends AsyncTask<String, Void, Uri> {
+      @Override
       protected Uri doInBackground(String... locations) {
         String weatherUri = postLocationToUmbrellaToday(locations[0]);
         Log.d(TAG, weatherUri);
         return Uri.parse(weatherUri);
       }
 
+      @Override
       protected void onPostExecute(Uri weatherUri) {
         Intent intent = new Intent(Intent.ACTION_VIEW, weatherUri);
         intent.setClass(UmbrellaToday.this, UmbrellaForToday.class);
@@ -101,7 +104,11 @@ public class UmbrellaToday extends Activity
             return null;
           }
 
-          return response.getHeaders("Location")[0].getValue() + ".xml";
+          Header redirectLocation = response.getFirstHeader("Location");
+          if (redirectLocation != null) {
+            return redirectLocation.getValue() + ".xml";
+          }
+
         } catch (Exception e) {
           postRequest.abort();
         }
