@@ -4,3 +4,4 @@ gen
 .classpath
 .project
 local.properties
+*.swp
