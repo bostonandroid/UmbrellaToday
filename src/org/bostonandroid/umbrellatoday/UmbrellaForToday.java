@@ -14,6 +14,9 @@ import org.apache.http.HttpEntity;
 import java.io.ByteArrayOutputStream;
 import android.content.Intent;
 import android.util.Xml;
+import android.sax.RootElement;
+import android.sax.Element;
+import android.sax.EndTextElementListener;
 
 public class UmbrellaForToday extends Activity
 {
@@ -41,7 +44,7 @@ public class UmbrellaForToday extends Activity
       protected void onPostExecute(Report report) {
         if (report != null) {
           TextView tv = (TextView)findViewById(R.id.report);
-          tv.setText(report.getAnswer());
+          tv.setText(report.getLocationName() + ": " + report.getAnswer());
         }
         // else bounce back to UmbrellaToday activity with an error message
       }
@@ -49,6 +52,20 @@ public class UmbrellaForToday extends Activity
       private Report retrieveReport(Uri uri) {
         final DefaultHttpClient client = new DefaultHttpClient();
         final HttpGet getRequest = new HttpGet(uri.toString());
+        final Report report = new Report();
+
+        RootElement root = new RootElement("forecast");
+        root.getChild("answer").setEndTextElementListener(new EndTextElementListener() {
+          public void end(String body) {
+            report.setAnswer(body);
+          }
+        });
+        Element location = root.getChild("location");
+        location.getChild("name").setEndTextElementListener(new EndTextElementListener() {
+          public void end(String body) {
+            report.setLocationName(body);
+          }
+        });
 
         try {
           HttpResponse response = client.execute(getRequest);
@@ -62,10 +79,11 @@ public class UmbrellaForToday extends Activity
           HttpEntity entity = response.getEntity();
 
           if (entity != null) {
-            ReportHandler handler = new ReportHandler();
-            Xml.parse(entity.getContent(), Xml.Encoding.UTF_8, handler);
+            //ReportHandler handler = new ReportHandler();
+          
+            Xml.parse(entity.getContent(), Xml.Encoding.UTF_8, root.getContentHandler());
 
-            return handler.getReport();
+            return report;
           }
 
         } catch (Exception e) {
