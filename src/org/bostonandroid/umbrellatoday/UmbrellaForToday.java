@@ -18,10 +18,13 @@ import android.sax.EndTextElementListener;
 import java.io.InputStream;
 import java.io.IOException;
 import org.xml.sax.SAXException;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 
 public class UmbrellaForToday extends Activity
 {
     public final static String TAG = "UmbrellaForToday";
+    static final int DIALOG_LOADING = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -30,11 +33,25 @@ public class UmbrellaForToday extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today);
 
+        showDialog(DIALOG_LOADING);
+
         Intent intent = getIntent();
         String reportUrl = intent.getDataString();
 
         ReportRetriever r = new ReportRetriever();
         r.execute(reportUrl);
+    }
+
+    protected Dialog onCreateDialog(int id) {
+      Dialog dialog;
+      switch(id) {
+      case DIALOG_LOADING:
+        dialog = ProgressDialog.show(UmbrellaForToday.this, "", "Loading. Please wait ...", true);
+        break;
+      default:
+        dialog = null;
+      }
+      return dialog;
     }
 
     private class ReportRetriever extends AsyncTask<String, Void, Report> {
@@ -54,6 +71,7 @@ public class UmbrellaForToday extends Activity
           tv.setText(report.getAnswer().toUpperCase());
           // TODO: Get activity title from strings.xml, also do something if location[name] is null
           setTitle("Umbrella Today for " + report.getLocationName());
+          dismissDialog(DIALOG_LOADING);
         }
         else {
           finish();
