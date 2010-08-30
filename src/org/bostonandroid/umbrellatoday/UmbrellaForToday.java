@@ -20,11 +20,13 @@ import java.io.IOException;
 import org.xml.sax.SAXException;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 
 public class UmbrellaForToday extends Activity
 {
     public final static String TAG = "UmbrellaForToday";
     static final int DIALOG_LOADING = 0;
+    ReportRetriever r = new ReportRetriever();
 
     /** Called when the activity is first created. */
     @Override
@@ -38,7 +40,6 @@ public class UmbrellaForToday extends Activity
         Intent intent = getIntent();
         String reportUrl = intent.getDataString();
 
-        ReportRetriever r = new ReportRetriever();
         r.execute(reportUrl);
     }
 
@@ -47,6 +48,11 @@ public class UmbrellaForToday extends Activity
       switch(id) {
       case DIALOG_LOADING:
         dialog = ProgressDialog.show(UmbrellaForToday.this, "", "Loading. Please wait ...", true);
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+          public void onCancel(DialogInterface dialog) {
+            r.cancel(true);
+          }
+        });
         break;
       default:
         dialog = null;
