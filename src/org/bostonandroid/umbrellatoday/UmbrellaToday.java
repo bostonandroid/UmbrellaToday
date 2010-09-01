@@ -20,6 +20,14 @@ import android.view.MenuItem;
 import org.apache.http.Header;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.location.Location;
+import android.content.Context;
+import android.location.Geocoder;
+import java.util.Locale;
+import java.util.List;
+import android.location.Address;
 
 public class UmbrellaToday extends Activity
 {
@@ -44,6 +52,28 @@ public class UmbrellaToday extends Activity
             }
           }
         });
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Log.d(TAG, "Latitude: " + lastKnownLocation.getLatitude() + "; Longitude: " + lastKnownLocation.getLongitude());
+
+        Geocoder geocoder = new Geocoder(UmbrellaToday.this);
+
+        List<Address> addressList;
+
+        // http://blogoscoped.com/archive/2008-12-15-n14.html
+        try {
+          addressList = geocoder.getFromLocation(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), 1);
+        } catch (IOException e) {
+          addressList = null;
+        }
+        if (!addressList.isEmpty()) {
+          Address address = addressList.get(0);
+          Log.d(TAG, address.getPostalCode());
+        } else {
+          Log.d(TAG, "addressList is empty");
+        }
     }
 
     @Override
