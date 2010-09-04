@@ -21,17 +21,22 @@ import org.apache.http.Header;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.location.Location;
 import android.content.Context;
 import android.location.Geocoder;
-import java.util.Locale;
 import java.util.List;
 import android.location.Address;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.widget.Toast;
+import java.util.Stack;
 
 public class UmbrellaToday extends Activity
 {
   public final static String TAG = "UmbrellaToday";
+
+  static final int DIALOG_LOADING = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -47,6 +52,7 @@ public class UmbrellaToday extends Activity
           public void onClick(View v) {
             String locationText = location.getText().toString();
             if (locationText.length() > 0) {
+              showDialog(DIALOG_LOADING);
               ResourceRetriever r = new ResourceRetriever();
               r.execute(locationText);
             }
@@ -55,25 +61,58 @@ public class UmbrellaToday extends Activity
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Log.d(TAG, "Latitude: " + lastKnownLocation.getLatitude() + "; Longitude: " + lastKnownLocation.getLongitude());
+        String provider = LocationManager.NETWORK_PROVIDER;
 
-        Geocoder geocoder = new Geocoder(UmbrellaToday.this);
+        if (locationManager.isProviderEnabled(provider)) {
+          showDialog(DIALOG_LOADING);
 
-        List<Address> addressList;
+          Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-        // http://blogoscoped.com/archive/2008-12-15-n14.html
-        try {
-          addressList = geocoder.getFromLocation(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), 1);
-        } catch (IOException e) {
-          addressList = null;
+          Address address = geocodeLocation(lastKnownLocation);
+
+          if (address != null) {
+            ResourceRetriever r = new ResourceRetriever();
+            r.execute(address.getLocality() + ", " + address.getAdminArea());
+          } else {
+            dismissDialog(DIALOG_LOADING);
+            Toast.makeText(UmbrellaToday.this, "Couldn't find location ...", Toast.LENGTH_SHORT).show();
+          }
         }
-        if (!addressList.isEmpty()) {
-          Address address = addressList.get(0);
-          Log.d(TAG, address.getPostalCode());
-        } else {
-          Log.d(TAG, "addressList is empty");
-        }
+    }
+
+    private Address geocodeLocation(Location location) {
+      double lat = location.getLatitude();
+      double lon = location.getLongitude();
+
+      Geocoder geocoder = new Geocoder(UmbrellaToday.this);
+
+      List<Address> addressList = null;
+
+      try {
+        addressList = geocoder.getFromLocation(lat, lon, 1);
+      } catch (IOException e) {
+        return null;
+      }
+
+      if (!addressList.isEmpty()) {
+        Address address = addressList.get(0);
+        return address;
+      }
+
+      return null;
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+      Dialog dialog;
+      switch(id) {
+      case DIALOG_LOADING:
+        dialog = ProgressDialog.show(UmbrellaToday.this, "", "Loading. Please wait ...", false);
+        break;
+      default:
+        dialog = null;
+      }
+      return dialog;
     }
 
     @Override
@@ -89,7 +128,7 @@ public class UmbrellaToday extends Activity
       case R.id.about_button:
         Intent intent = new Intent(UmbrellaToday.this, AboutUmbrellaToday.class);
         startActivity(intent);
-       return true;
+        return true;
       default:
         return super.onOptionsItemSelected(item);
       }
@@ -112,6 +151,7 @@ public class UmbrellaToday extends Activity
           intent.setClass(UmbrellaToday.this, UmbrellaForToday.class);
 
           UmbrellaToday.this.startActivity(intent);
+          dismissDialog(DIALOG_LOADING);
         }
       }
 

@@ -43,6 +43,7 @@ public class UmbrellaForToday extends Activity
         r.execute(reportUrl);
     }
 
+    @Override
     protected Dialog onCreateDialog(int id) {
       Dialog dialog;
       switch(id) {
