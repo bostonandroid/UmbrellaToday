@@ -4,4 +4,5 @@
     <string name="about_button_text">About</string>
     <string name="about_umbrella_today">About Umbrella Today</string>
     <string name="about_text">Copyright 2010 Boston Android</string>
+    <string name="new_location_text">New Location</string>
 </resources>

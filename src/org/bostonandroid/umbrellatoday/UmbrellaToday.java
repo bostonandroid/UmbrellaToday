@@ -1,36 +1,36 @@
 package org.bostonandroid.umbrellatoday;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.Button;
-import android.view.View;
-import android.net.Uri;
-import android.util.Log;
-import android.os.AsyncTask;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.StringEntity;
-import android.content.Intent;
-import android.view.MenuInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import org.apache.http.Header;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
-import android.location.LocationManager;
-import android.location.Location;
-import android.content.Context;
-import android.location.Geocoder;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
-import android.location.Address;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
-import java.util.Stack;
 
 public class UmbrellaToday extends Activity
 {
