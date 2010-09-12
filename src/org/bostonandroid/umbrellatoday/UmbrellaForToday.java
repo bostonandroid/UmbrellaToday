@@ -34,7 +34,6 @@ public class UmbrellaForToday extends Activity {
         showDialog(DIALOG_LOADING);
 
         Intent intent = getIntent();
-        String reportUrl = intent.getDataString();
 
         ReportRetriever r = new ReportRetriever(new ReportConsumer() {
             public void consumeReport(Report report) {
@@ -42,18 +41,21 @@ public class UmbrellaForToday extends Activity {
 
                 tv.setText(report.getAnswer());
                 setTitle("Umbrella Today for " + report.getLocationName());
-                dismissDialog(UmbrellaForToday.DIALOG_LOADING);
+                dismissDialog(DIALOG_LOADING);
             }
         });
-        
-        r.execute(reportUrl);
-        
+
+        r.execute(intent.getDataString());
+
         Calendar c = Calendar.getInstance();
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mMinute = c.get(Calendar.MINUTE);
-        
-        mAlarmSender = PendingIntent.getService(UmbrellaForToday.this, 0,
-                new Intent(UmbrellaForToday.this, AlarmReceiver.class), 0);
+
+        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, intent.getData());
+        notificationIntent.setClass(UmbrellaForToday.this, AlarmReceiver.class);
+
+        mAlarmSender = PendingIntent.getBroadcast(UmbrellaForToday.this, 0,
+                notificationIntent, 0);
     }
 
     @Override
@@ -121,5 +123,4 @@ public class UmbrellaForToday extends Activity {
         }
         return dialog;
     }
-
 }
