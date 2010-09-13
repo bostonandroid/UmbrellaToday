@@ -75,6 +75,7 @@ public class UmbrellaForToday extends Activity {
             return true;
         case R.id.set_alarm_button:
             showDialog(TIME_DIALOG_ID);
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }
