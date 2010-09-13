@@ -1,22 +1,19 @@
 package org.bostonandroid.umbrellatoday;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import android.os.AsyncTask;
 import android.sax.Element;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
-import android.util.Log;
-import android.util.Xml;
 
 public class ReportRetriever extends AsyncTask<String, Void, Report> {
     public final static String TAG = "ReportRetriever";
@@ -46,74 +43,43 @@ public class ReportRetriever extends AsyncTask<String, Void, Report> {
 
     @Override
     protected void onPostExecute(Report report) {
-        if (report != null) {
-            ReportConsumer consumer = activityReference.get();
-            if (consumer != null) {
-                consumer.consumeReport(report);
-            }
+        ReportConsumer consumer = activityReference.get();
+        if (consumer != null) {
+            consumer.consumeReport(report);
         }
     }
 
     private Report retrieveReport(String uri) throws ReportRetrieverException {
-        DefaultHttpClient client = new DefaultHttpClient();
-        HttpGet getRequest = new HttpGet(uri);
-
         final Report report = new Report();
 
-        HttpResponse response;
+        RootElement root = new RootElement("forecast");
+        root.getChild("answer").setEndTextElementListener(
+                new EndTextElementListener() {
+                    public void end(String body) {
+                        report.setAnswer(body);
+                    }
+                });
+        Element location = root.getChild("location");
+        location.getChild("name").setEndTextElementListener(
+                new EndTextElementListener() {
+                    public void end(String body) {
+                        report.setLocationName(body);
+                    }
+                });
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
 
         try {
-            response = client.execute(getRequest);
+            SAXParser parser = factory.newSAXParser();
+            XMLReader reader = parser.getXMLReader();
+            reader.setContentHandler(root.getContentHandler());
+            reader.parse(uri);
+        } catch (ParserConfigurationException e) {
+            throw new ReportRetrieverException("Unable to parse report", e);
+        } catch (SAXException e) {
+            throw new ReportRetrieverException("Unable to parse report", e);
         } catch (IOException e) {
-            getRequest.abort();
-            throw new ReportRetrieverException("Failed to execute GET request",
-                    e);
-        }
-
-        int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != HttpStatus.SC_OK) {
-            Log.w(TAG, "Error " + statusCode + " retrieving weather report.");
-            // FIXME: throw or perhaps do something else?
-            throw new ReportRetrieverException("Failed to communicate with UT");
-        }
-
-        HttpEntity entity = response.getEntity();
-
-        if (entity != null) {
-            InputStream content;
-
-            try {
-                content = entity.getContent();
-            } catch (IOException e) {
-                throw new ReportRetrieverException(
-                        "Failed to read response body", e);
-            } catch (IllegalStateException e) {
-                throw new ReportRetrieverException(
-                        "Failed to read response body", e);
-            }
-
-            RootElement root = new RootElement("forecast");
-            root.getChild("answer").setEndTextElementListener(
-                    new EndTextElementListener() {
-                        public void end(String body) {
-                            report.setAnswer(body);
-                        }
-                    });
-            Element location = root.getChild("location");
-            location.getChild("name").setEndTextElementListener(
-                    new EndTextElementListener() {
-                        public void end(String body) {
-                            report.setLocationName(body);
-                        }
-                    });
-
-            try {
-                Xml.parse(content, Xml.Encoding.UTF_8, root.getContentHandler());
-            } catch (IOException e) {
-                throw new ReportRetrieverException("Unable to parse report", e);
-            } catch (SAXException e) {
-                throw new ReportRetrieverException("Unable to parse report", e);
-            }
+            throw new ReportRetrieverException("Unable to parse report", e);
         }
 
         return report;
