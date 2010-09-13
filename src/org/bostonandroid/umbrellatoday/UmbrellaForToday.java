@@ -52,9 +52,9 @@ public class UmbrellaForToday extends Activity {
         mMinute = c.get(Calendar.MINUTE);
 
         Intent notificationIntent = new Intent(Intent.ACTION_VIEW, intent.getData());
-        notificationIntent.setClass(UmbrellaForToday.this, AlarmReceiver.class);
+        notificationIntent.setClass(UmbrellaForToday.this, AlarmService.class);
 
-        mAlarmSender = PendingIntent.getBroadcast(UmbrellaForToday.this, 0,
+        mAlarmSender = PendingIntent.getService(UmbrellaForToday.this, 0,
                 notificationIntent, 0);
     }
 
