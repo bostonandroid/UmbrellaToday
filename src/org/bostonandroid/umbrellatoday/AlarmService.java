@@ -35,35 +35,26 @@ public class AlarmService extends Service {
         r.execute(intent.getDataString());
     }
 
-    private void showNotification(String message, PendingIntent contentIntent) {
-        Notification notification = new Notification(
-                R.drawable.notification_icon, "Umbrella Today", System
-                        .currentTimeMillis());
-
-        notification.setLatestEventInfo(AlarmService.this, "UmbrellaToday",
-                message, contentIntent);
-
-        notificationManager.notify(1, notification);
-    }
-
     private class AlarmServiceReportConsumer implements ReportConsumer {
-        private Intent intent;
+        private PendingIntent contentIntent;
         private int startId;
 
         AlarmServiceReportConsumer(Intent intent, int startId) {
-            this.intent = intent;
+            this.contentIntent = notificationIntent(intent);
             this.startId = startId;
         }
 
         public void consumeReport(Report report) {
-            if (report.getAnswer().equals("yes")) {
-                PendingIntent contentIntent = notificationIntent(intent);
+            String answer = report.getAnswer();
+            if (answer.equals("yes")) {
                 showNotification("You should bring your Umbrella today",
                         contentIntent);
-                retrievers.remove(startId);
-                if (retrievers.isEmpty()) {
-                    stopSelf();
-                }
+            } else if (answer.equals("snow")) {
+                showNotification("You should wear snow pants today", contentIntent);
+            }
+            retrievers.remove(startId);
+            if (retrievers.isEmpty()) {
+                stopSelf();
             }
         }
 
@@ -77,6 +68,17 @@ public class AlarmService extends Service {
                     AlarmService.this, 0, notificationIntent, 0);
 
             return contentIntent;
+        }
+
+        private void showNotification(String message, PendingIntent contentIntent) {
+            Notification notification = new Notification(
+                    R.drawable.notification_icon, "Umbrella Today", System
+                            .currentTimeMillis());
+
+            notification.setLatestEventInfo(AlarmService.this, "UmbrellaToday",
+                    message, contentIntent);
+
+            notificationManager.notify(startId, notification);
         }
     }
 }
