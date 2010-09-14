@@ -75,7 +75,7 @@ public class AlarmService extends Service {
                     R.drawable.notification_icon, "Umbrella Today", System
                             .currentTimeMillis());
 
-            notification.setLatestEventInfo(AlarmService.this, "UmbrellaToday",
+            notification.setLatestEventInfo(AlarmService.this, "Umbrella Today",
                     message, contentIntent);
 
             notificationManager.notify(startId, notification);
