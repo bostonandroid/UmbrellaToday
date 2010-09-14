@@ -1,5 +1,7 @@
 package org.bostonandroid.umbrellatoday;
 
+import java.util.Hashtable;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +13,7 @@ import android.os.IBinder;
 public class AlarmService extends Service {
     public final static String TAG = "AlarmReceiver";
     private NotificationManager notificationManager;
+    private Hashtable<Integer, ReportRetriever> retrievers;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -20,12 +23,15 @@ public class AlarmService extends Service {
     @Override
     public void onCreate() {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        retrievers = new Hashtable<Integer, ReportRetriever>();
     }
 
     @Override
-    public void onStart(final Intent intent, int startId) {
-        ReportConsumer consumer = new AlarmServiceReportConsumer(intent);
+    public void onStart(Intent intent, int startId) {
+        ReportConsumer consumer = new AlarmServiceReportConsumer(intent,
+                startId);
         ReportRetriever r = new ReportRetriever(consumer);
+        retrievers.put(startId, r);
         r.execute(intent.getDataString());
     }
 
@@ -42,21 +48,30 @@ public class AlarmService extends Service {
 
     private class AlarmServiceReportConsumer implements ReportConsumer {
         private Intent intent;
+        private int startId;
 
-        AlarmServiceReportConsumer(Intent intent) {
+        AlarmServiceReportConsumer(Intent intent, int startId) {
             this.intent = intent;
+            this.startId = startId;
         }
 
         public void consumeReport(Report report) {
             if (report.getAnswer().equals("yes")) {
                 PendingIntent contentIntent = notificationIntent(intent);
-                showNotification("You should bring your Umbrella today", contentIntent);
+                showNotification("You should bring your Umbrella today",
+                        contentIntent);
+                retrievers.remove(startId);
+                if (retrievers.isEmpty()) {
+                    stopSelf();
+                }
             }
         }
-        
+
         private PendingIntent notificationIntent(Intent intent) {
-            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, intent.getData());
-            notificationIntent.setClass(AlarmService.this, UmbrellaForToday.class);
+            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, intent
+                    .getData());
+            notificationIntent.setClass(AlarmService.this,
+                    UmbrellaForToday.class);
 
             PendingIntent contentIntent = PendingIntent.getActivity(
                     AlarmService.this, 0, notificationIntent, 0);
