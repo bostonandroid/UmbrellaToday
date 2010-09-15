@@ -2,6 +2,7 @@ package org.bostonandroid.umbrellatoday;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.View;
 import android.widget.Button;
