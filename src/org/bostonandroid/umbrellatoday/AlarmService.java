@@ -1,84 +1,111 @@
 package org.bostonandroid.umbrellatoday;
 
-import java.util.Hashtable;
+import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
+import android.sax.Element;
+import android.sax.EndTextElementListener;
+import android.sax.RootElement;
 
-public class AlarmService extends Service {
-    public final static String TAG = "AlarmReceiver";
+public class AlarmService extends IntentService {
+
+    public final static String TAG = "AlarmService";
+
     private NotificationManager notificationManager;
-    private Hashtable<Integer, ReportRetriever> retrievers;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public AlarmService() {
+        super("AlarmService");
     }
 
     @Override
     public void onCreate() {
+        super.onCreate();
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        retrievers = new Hashtable<Integer, ReportRetriever>();
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        ReportConsumer consumer = new AlarmServiceReportConsumer(intent,
-                startId);
-        ReportRetriever r = new ReportRetriever(consumer);
-        retrievers.put(startId, r);
-        r.execute(intent.getDataString());
-    }
-
-    private class AlarmServiceReportConsumer implements ReportConsumer {
-        private PendingIntent contentIntent;
-        private int startId;
-
-        AlarmServiceReportConsumer(Intent intent, int startId) {
-            this.contentIntent = notificationIntent(intent);
-            this.startId = startId;
+    protected void onHandleIntent(Intent intent) {
+        ReportRetriever retriever = new ReportRetriever(intent.getDataString());
+        Report report;
+        try {
+            report = retriever.retrieveReport();
+        } catch (ReportRetrieverException e) {
+            report = null;
         }
-
-        public void consumeReport(Report report) {
+        if (report != null) {
             String answer = report.getAnswer();
             if (answer.equals("yes")) {
-                showNotification("You should bring your Umbrella today",
-                        contentIntent);
+                showNotification("Rain");
             } else if (answer.equals("snow")) {
-                showNotification("You should wear snow pants today", contentIntent);
-            }
-            retrievers.remove(startId);
-            if (retrievers.isEmpty()) {
-                stopSelf();
+                showNotification("Snow");
             }
         }
+    }
 
-        private PendingIntent notificationIntent(Intent intent) {
-            Intent notificationIntent = new Intent(Intent.ACTION_VIEW, intent
-                    .getData());
-            notificationIntent.setClass(AlarmService.this,
-                    UmbrellaForToday.class);
+    private void showNotification(String message) {
+        String appName = getString(R.string.app_name);
+        Notification notification = new Notification(
+                R.drawable.notification_icon, appName, System
+                        .currentTimeMillis());
+        notification.setLatestEventInfo(AlarmService.this, appName, message,
+                null);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(1, notification);
+    }
 
-            PendingIntent contentIntent = PendingIntent.getActivity(
-                    AlarmService.this, 0, notificationIntent, 0);
+    private class ReportRetriever {
 
-            return contentIntent;
+        private String url;
+
+        ReportRetriever(String url) {
+            this.url = url;
         }
 
-        private void showNotification(String message, PendingIntent contentIntent) {
-            Notification notification = new Notification(
-                    R.drawable.notification_icon, "Umbrella Today", System
-                            .currentTimeMillis());
+        public Report retrieveReport() throws ReportRetrieverException {
+            final Report report = new Report();
 
-            notification.setLatestEventInfo(AlarmService.this, "Umbrella Today",
-                    message, contentIntent);
+            RootElement root = new RootElement("forecast");
+            root.getChild("answer").setEndTextElementListener(
+                    new EndTextElementListener() {
+                        public void end(String body) {
+                            report.setAnswer(body);
+                        }
+                    });
+            Element location = root.getChild("location");
+            location.getChild("name").setEndTextElementListener(
+                    new EndTextElementListener() {
+                        public void end(String body) {
+                            report.setLocationName(body);
+                        }
+                    });
 
-            notificationManager.notify(startId, notification);
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+
+            try {
+                SAXParser parser = factory.newSAXParser();
+                XMLReader reader = parser.getXMLReader();
+                reader.setContentHandler(root.getContentHandler());
+                reader.parse(url);
+            } catch (ParserConfigurationException e) {
+                throw new ReportRetrieverException("Unable to parse report", e);
+            } catch (SAXException e) {
+                throw new ReportRetrieverException("Unable to parse report", e);
+            } catch (IOException e) {
+                throw new ReportRetrieverException("Unable to parse report", e);
+            }
+
+            return report;
         }
     }
 }
