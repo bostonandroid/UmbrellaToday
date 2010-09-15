@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -37,5 +38,17 @@ public class Alerts extends ListActivity {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main_menu, menu);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+    case R.id.about_button:
+      Intent intent = new Intent(Alerts.this, AboutUmbrellaToday.class);
+      startActivity(intent);
+      return true;
+    default:
+      return super.onOptionsItemSelected(item);
+    }
   }
 }

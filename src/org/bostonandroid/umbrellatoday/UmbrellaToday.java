@@ -15,7 +15,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,7 +23,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -111,18 +109,6 @@ public class UmbrellaToday extends Activity
         dialog = null;
       }
       return dialog;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-      switch (item.getItemId()) {
-      case R.id.about_button:
-        Intent intent = new Intent(UmbrellaToday.this, AboutUmbrellaToday.class);
-        startActivity(intent);
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-      }
     }
 
     private class ResourceRetriever extends AsyncTask<String, Void, Uri> {
