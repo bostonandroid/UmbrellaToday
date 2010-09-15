@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical" android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:padding="6dip">
+  android:layout_height="fill_parent">
   <ListView android:id="@android:id/list"
-    android:layout_width="fill_parent" android:layout_height="wrap_content" />
-  <Button android:text="@string/save_alert" android:id="@+id/save_alert"
-    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+    android:layout_weight="1"/>
+     />
+
+  <LinearLayout android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal"
+    style="@android:style/ButtonBar">
+    <Button android:text="@string/save_alert" android:id="@+id/save_alert"
+      android:layout_width="wrap_content" android:layout_height="wrap_content" />
+  </LinearLayout>
 </LinearLayout>
