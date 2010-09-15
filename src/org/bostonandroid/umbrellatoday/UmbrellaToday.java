@@ -24,8 +24,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -116,13 +114,6 @@ public class UmbrellaToday extends Activity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-      MenuInflater inflater = getMenuInflater();
-      inflater.inflate(R.menu.main_menu, menu);
-      return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
       switch (item.getItemId()) {
       case R.id.about_button:
@@ -142,17 +133,6 @@ public class UmbrellaToday extends Activity
         }
 
         return null;
-      }
-
-      @Override
-      protected void onPostExecute(Uri weatherUri) {
-        if (weatherUri != null) {
-          Intent intent = new Intent(Intent.ACTION_VIEW, weatherUri);
-          intent.setClass(UmbrellaToday.this, UmbrellaForToday.class);
-
-          UmbrellaToday.this.startActivity(intent);
-          dismissDialog(DIALOG_LOADING);
-        }
       }
 
       private Uri retrieveResource(String location) {
