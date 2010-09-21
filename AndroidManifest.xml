@@ -6,8 +6,6 @@
     <application android:label="@string/app_name">
         <activity android:name="UmbrellaToday"
                   android:label="@string/app_name" />
-        <activity android:name="UmbrellaForToday"
-          android:label="@string/app_name" />
         <activity android:name="AboutUmbrellaToday"
           android:label="@string/about_umbrella_today" />
           

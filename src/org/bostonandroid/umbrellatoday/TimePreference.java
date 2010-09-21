@@ -33,7 +33,7 @@ public class TimePreference extends DialogPreference implements TimePicker.OnTim
       return timePicker;
     }
     
-    private Calendar getTime() {
+    public Calendar getTime() {
       try {
         Date date = formatter().parse(defaultValue);
         Calendar cal = Calendar.getInstance();
