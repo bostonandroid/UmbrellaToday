@@ -45,10 +45,11 @@ public class Alert {
     try {
       SQLiteDatabase db = new AlertsDatabase(c).getWritableDatabase();
       db.insertOrThrow("alerts", null, asContentValues());
+      return true;
     } catch (SQLException e) {
       this.errorCanBeNull = e;
+      return false;
     }
-    return false;
   }
   
   public String errorString() {
