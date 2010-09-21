@@ -1,6 +1,6 @@
 package org.bostonandroid.umbrellatoday;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
@@ -13,19 +13,28 @@ public class Alert {
     return db.query("alerts", null, null, null, null, null, null);
   }
   
-  protected Alert(Date alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
+  protected Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
   }
   
-  public class Builder {
-    private Date theTime;
+  public boolean save() {
+    return false;
+  }
+  
+  public String errorString() {
+    return "";
+  }
+  
+  static public class Builder {
+    private Calendar theTime;
     private List<String> theRepeatDays;
     private String theLocation;
     private boolean theAutolocate;
+
     public Builder() {
       super();
     }
     
-    public Builder alertAt(Date time) {
+    public Builder alertAt(Calendar time) {
       theTime = time;
       return this;
     }
