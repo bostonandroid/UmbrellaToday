@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <org.bostonandroid.umbrellatoday.TimePreference android:key="time" android:title="@string/time" />
-  <ListPreference android:key="repeat" android:title="@string/repeat" android:entries="@array/repeat_entries" android:entryValues="@array/repeat_values" />
-  <CheckBoxPreference android:key="detect_location" android:title="@string/detect_location" android:summaryOn="Guess your location" android:summaryOff="Never detect location" android:disableDependentsState="true" android:defaultValue="true" />
-  <EditTextPreference android:key="location" android:title="@string/location" android:dependency="detect_location" />
+  <org.bostonandroid.umbrellatoday.TimePreference android:key="time" android:title="@string/time" android:persistent="false" />
+  <ListPreference android:key="repeat" android:title="@string/repeat" android:entries="@array/repeat_entries" android:entryValues="@array/repeat_values" android:persistent="false" />
+  <CheckBoxPreference android:key="detect_location" android:title="@string/detect_location" android:summaryOn="Guess your location" android:summaryOff="Never detect location" android:disableDependentsState="true" android:defaultValue="true" android:persistent="false" />
+  <EditTextPreference android:key="location" android:title="@string/location" android:dependency="detect_location" android:persistent="false" />
 </PreferenceScreen>
