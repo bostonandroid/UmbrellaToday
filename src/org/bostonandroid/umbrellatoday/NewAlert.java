@@ -44,7 +44,7 @@ public class NewAlert extends PreferenceActivity {
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText()).
       build();
-    return makeAlertFailure(alert, alert.save());
+    return makeAlertFailure(alert, alert.save(getApplicationContext()));
   }
   
   private Either<Alert> makeAlertFailure(Alert a, boolean saved) {
