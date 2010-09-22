@@ -1,7 +1,9 @@
 package org.bostonandroid.umbrellatoday;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -62,7 +64,7 @@ public class Alert {
   
   private ContentValues asContentValues() {
     ContentValues cv = new ContentValues();
-    cv.put("alertAt", formatter().format(this.alertAt));
+    cv.put("alert_at", formatter().format(this.alertAt.getTime()));
     cv.put("sunday", this.sunday);
     cv.put("monday", this.monday);
     cv.put("tuesday", this.tuesday);
@@ -80,22 +82,25 @@ public class Alert {
   }
   
   static public class Builder {
-    private Calendar theTime;
-    private List<String> theRepeatDays;
+    private Calendar time;
+    private List<String> repeatDays;
     private String theLocation;
-    private boolean theAutolocate;
+    private boolean isAutolocate;
 
     public Builder() {
-      super();
+      this.time = new GregorianCalendar(1970,01,01);
+      this.repeatDays = new ArrayList<String>();
+      this.theLocation = "";
+      this.isAutolocate = false;
     }
     
     public Builder alertAt(Calendar time) {
-      theTime = time;
+      this.time = time;
       return this;
     }
     
     public Builder repeatDays(List<String> days) {
-      theRepeatDays = days;
+      repeatDays = days;
       return this;
     }
     
@@ -105,21 +110,21 @@ public class Alert {
     }
     
     public Builder autolocate(boolean autogps) {
-      theAutolocate = autogps;
+      isAutolocate = autogps;
       return this;
     }
     
     public Alert build() {
-      return new Alert(theTime,
-          theRepeatDays.contains("Sunday"),
-          theRepeatDays.contains("Monday"),
-          theRepeatDays.contains("Tuesday"),
-          theRepeatDays.contains("Wednesday"),
-          theRepeatDays.contains("Thursday"),
-          theRepeatDays.contains("Friday"),
-          theRepeatDays.contains("Saturday"),
+      return new Alert(time,
+          repeatDays.contains("Sunday"),
+          repeatDays.contains("Monday"),
+          repeatDays.contains("Tuesday"),
+          repeatDays.contains("Wednesday"),
+          repeatDays.contains("Thursday"),
+          repeatDays.contains("Friday"),
+          repeatDays.contains("Saturday"),
           theLocation,
-          theAutolocate);
+          isAutolocate);
     }
   }
 }

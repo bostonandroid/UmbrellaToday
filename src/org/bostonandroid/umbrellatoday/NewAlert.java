@@ -1,6 +1,5 @@
 package org.bostonandroid.umbrellatoday;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -20,18 +19,17 @@ public class NewAlert extends PreferenceActivity {
     Button nextButton = (Button)findViewById(R.id.save_alert);
     nextButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        Either<Alert> potentialFailure = saveAlert();
-        potentialFailure.onSuccess(new EitherRunner<Alert>() {
-          public void run(Alert a) {
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setClass(NewAlert.this, Alerts.class);
-            startActivity(i);
-          }}).onFailure(new EitherRunner<Alert>() {
+        saveAlert().
+          onSuccess(new EitherRunner<Alert>() {
+            public void run(Alert a) { 
+              finish();
+          }}).
+          onFailure(new EitherRunner<Alert>() {
             public void run(Alert a) {
               Toast.makeText(getApplicationContext(),
                   "Alert save failed: "+a.errorString(),
                   Toast.LENGTH_LONG);
-            }});
+          }});
       }
     });
   }
@@ -44,6 +42,7 @@ public class NewAlert extends PreferenceActivity {
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText()).
       build();
+    /// TODO: this #save needs to be async.
     return makeAlertFailure(alert, alert.save(getApplicationContext()));
   }
   
