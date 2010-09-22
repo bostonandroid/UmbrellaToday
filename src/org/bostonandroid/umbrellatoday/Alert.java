@@ -84,6 +84,31 @@ public class Alert {
   public Calendar alertAt() {
     return this.alertAt;
   }
+  public List<String> repeatDays() {
+	  List<String> days = new ArrayList<String>();
+	  if (this.monday) {
+		  days.add("Monday");
+	  }
+	  if (this.tuesday){
+		  days.add("Tuesday");
+	  }
+	  if (this.wednesday) {
+		  days.add("Wednesday");
+	  }
+	  if (this.thursday) {
+		  days.add("Thursday");
+	  }
+	  if (this.friday) {
+		  days.add("Friday");
+	  }
+	  if (this.saturday){
+		  days.add("Saturday");
+	  }
+	  //if (this.sunday) {
+		  days.add("Sunday");
+	  //}
+	  return days;
+  }
   public boolean isAutolocate() {
     return this.autolocate;
   }
@@ -228,6 +253,7 @@ public class Alert {
     
     public Updater repeatDays(List<String> days) {
       repeatDays = days;
+      Log.d("blegh", repeatDays.contains("Sunday") + "");
       return this;
     }
     

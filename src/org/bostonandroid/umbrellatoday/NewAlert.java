@@ -39,6 +39,7 @@ public class NewAlert extends PreferenceActivity {
     Alert.Builder alertBuilder = new Alert.Builder();
     Alert alert = alertBuilder.
       alertAt(((TimePreference)pm.findPreference("time")).getTime()).
+      repeatDays(((RepeatPreference)pm.findPreference("repeat")).getChoices()).
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText()).
       build();
