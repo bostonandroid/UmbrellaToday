@@ -1,5 +1,7 @@
 package org.bostonandroid.umbrellatoday;
 
+import java.util.Arrays;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -19,6 +21,7 @@ public class EditAlert extends PreferenceActivity {
     Long alert_id = (Long)getIntent().getExtras().get("alert_id");
     final Alert alert = Alert.find(this,alert_id);
     ((TimePreference)findPreference("time")).setTime(alert.alertAt());
+    ((RepeatPreference)findPreference("repeating")).setChoices(Arrays.asList(new CharSequence[] { "Sunday" }));
     ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
     ((EditTextPreference)findPreference("location")).setText(alert.location());
     
