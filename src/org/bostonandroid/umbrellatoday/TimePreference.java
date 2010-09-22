@@ -52,6 +52,10 @@ public class TimePreference extends DialogPreference implements TimePicker.OnTim
         }
     }
     
+    public void setTime(Calendar t) {
+      this.defaultValue = formatter().format(t.getTime());
+    }
+    
     public static SimpleDateFormat formatter() {
       return new SimpleDateFormat("HH:mm");
     }

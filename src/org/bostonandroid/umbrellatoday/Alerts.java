@@ -3,25 +3,25 @@ package org.bostonandroid.umbrellatoday;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class Alerts extends ListActivity {
+  private CursorAdapter alertCursor;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.alerts);
-    setListAdapter(new SimpleCursorAdapter(this,
-        android.R.layout.simple_list_item_1,
-        Alert.all(this),
-        new String[] {"alert_at"}, // A list of column names representing the data to bind to the UI.
-        new int[] {android.R.id.text1})); // The views that should display column in the "from" parameter. These should all be TextViews. The first N views in this list are given the values of the first N columns in the from parameter.
-
+    setListAdapter(alertCursor());
     LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
     addAlert.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
@@ -30,6 +30,28 @@ public class Alerts extends ListActivity {
         startActivity(i);
       }
     });
+  }
+  
+  private CursorAdapter alertCursor() {
+    if (this.alertCursor == null)
+      this.alertCursor = new SimpleCursorAdapter(
+          this,
+          android.R.layout.simple_list_item_1, Alert.all(this),
+          new String[] { "alert_at" }, 
+          new int[] { android.R.id.text1 });
+    return this.alertCursor;
+  }
+  
+  @Override
+  protected void onListItemClick (ListView l, View v, int position, long id) {
+    super.onListItemClick(l, v, position, id);
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    Log.i("Alerts", "onListItemClick: cursor="+alertCursor().getCursor());
+    Log.i("Alerts", "onListItemClick: moved="+alertCursor().getCursor().moveToPosition(position));
+    Log.i("Alerts", "onListItemClick: v="+alertCursor().getCursor().getLong(0));
+    i.putExtra("alert_id", alertCursor().getItemId(position));
+    i.setClass(Alerts.this, EditAlert.class);
+    startActivity(i);
   }
 
   @Override

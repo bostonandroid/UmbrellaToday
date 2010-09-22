@@ -17,6 +17,7 @@
             </intent-filter>
             </activity>
             <activity android:name="NewAlert" android:label="@string/new_alert" />
+                        <activity android:name="EditAlert" android:label="@string/edit_alert" />
 
 <service android:process=":remote" android:name="AlarmService"></service>
 </application>

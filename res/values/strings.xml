@@ -13,4 +13,5 @@
 <string name="location">City</string>
 <string name="new_alert">New Alert</string>
 <string name="save_alert">Add Alert</string>
+<string name="edit_alert">Update Alert</string>
 </resources>
