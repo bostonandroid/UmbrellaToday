@@ -58,6 +58,7 @@ public class Alert {
       Log.i("Alert", "find: c.count=0");
       a = null;
     }
+    c.close();
     db.close();
     return a;
   }
@@ -87,6 +88,7 @@ public class Alert {
   public Calendar alertAt() {
     return this.alertAt;
   }
+  
   public List<String> repeatDays() {
 	  List<String> days = new ArrayList<String>();
 	  if (this.monday) {
@@ -112,9 +114,11 @@ public class Alert {
 	  }
 	  return days;
   }
+  
   public boolean isAutolocate() {
     return this.autolocate;
   }
+  
   public String location() {
     return this.location;
   }
@@ -163,7 +167,9 @@ public class Alert {
   
   private ContentValues asContentValues() {
     ContentValues cv = new ContentValues();
-    cv.put("_id", this.id);
+    if (this.id != -1) {
+      cv.put("_id", this.id);
+    }
     cv.put("alert_at", formatter().format(this.alertAt.getTime()));
     cv.put("sunday", this.sunday);
     cv.put("monday", this.monday);
