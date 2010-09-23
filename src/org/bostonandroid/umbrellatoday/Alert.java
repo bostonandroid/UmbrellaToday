@@ -253,7 +253,6 @@ public class Alert {
     
     public Updater repeatDays(List<String> days) {
       repeatDays = days;
-      Log.d("blegh", repeatDays.contains("Sunday") + "");
       return this;
     }
     

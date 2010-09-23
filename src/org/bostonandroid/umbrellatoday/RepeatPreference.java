@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.widget.ListView;
 
@@ -25,7 +24,6 @@ public class RepeatPreference extends ListPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            Log.d("blah", "got a positive result");
         	this.currentChoices = new ArrayList<String>(this.newChoices);
             this.newChoices.clear();
         }
@@ -43,7 +41,6 @@ public class RepeatPreference extends ListPreference {
         for (int i = 0; i < entries.length; i++) {
             String entry = entries[i].toString();
             if (a.get(i)) {
-                Log.d("blah", entry);
                 this.newChoices.add(entry);
             }
         }
