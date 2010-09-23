@@ -2,6 +2,7 @@ package org.bostonandroid.umbrellatoday;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,14 +15,15 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class Alerts extends ListActivity {
-  private CursorAdapter alertCursor;
+  private CursorAdapter alertCursorAdapter;
+  private Cursor alertCursor;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.alerts);
-    setListAdapter(alertCursor());
+    setListAdapter(alertCursorAdapter());
     LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
     addAlert.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
@@ -31,25 +33,33 @@ public class Alerts extends ListActivity {
       }
     });
   }
-  
-  private CursorAdapter alertCursor() {
-    if (this.alertCursor == null)
-      this.alertCursor = new SimpleCursorAdapter(
+
+  private Cursor alertCursor() {
+      if (this.alertCursor == null) {
+          this.alertCursor = Alert.all(this);
+          startManagingCursor(this.alertCursor);
+      }
+      return this.alertCursor;
+  }
+
+  private CursorAdapter alertCursorAdapter() {
+    if (this.alertCursorAdapter == null)
+      this.alertCursorAdapter = new SimpleCursorAdapter(
           this,
-          android.R.layout.simple_list_item_1, Alert.all(this),
+          android.R.layout.simple_list_item_1, alertCursor(),
           new String[] { "alert_at" }, 
           new int[] { android.R.id.text1 });
-    return this.alertCursor;
+    return this.alertCursorAdapter;
   }
-  
+
   @Override
   protected void onListItemClick (ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);
     Intent i = new Intent(Intent.ACTION_VIEW);
-    Log.i("Alerts", "onListItemClick: cursor="+alertCursor().getCursor());
-    Log.i("Alerts", "onListItemClick: moved="+alertCursor().getCursor().moveToPosition(position));
-    Log.i("Alerts", "onListItemClick: v="+alertCursor().getCursor().getLong(0));
-    i.putExtra("alert_id", alertCursor().getItemId(position));
+    Log.i("Alerts", "onListItemClick: cursor="+alertCursor());
+    Log.i("Alerts", "onListItemClick: moved="+alertCursor().moveToPosition(position));
+    Log.i("Alerts", "onListItemClick: v="+alertCursor().getLong(0));
+    i.putExtra("alert_id", alertCursorAdapter().getItemId(position));
     i.setClass(Alerts.this, EditAlert.class);
     startActivity(i);
   }

@@ -39,10 +39,11 @@ public class Alert {
     Log.i("Alert", "find: id = "+id);
     SQLiteDatabase db = new AlertsDatabase(context).getReadableDatabase();
     Cursor c = db.rawQuery("SELECT * FROM alerts WHERE _id = ?", new String[] {id+""});
+    Alert a;
     if (c.getCount() > 0) {
       c.moveToFirst();
       Log.i("Alert", "find: c="+c);
-      return new Alert(c.getLong(0),
+      a = new Alert(c.getLong(0),
           stringToCalendar(c.getString(1)),
           c.getInt(2) == 1,
           c.getInt(3) == 1,
@@ -55,8 +56,10 @@ public class Alert {
           c.getInt(10) == 1);
     } else {
       Log.i("Alert", "find: c.count=0");
-      return null;
+      a = null;
     }
+    db.close();
+    return a;
   }
   
   protected Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
@@ -117,26 +120,36 @@ public class Alert {
   }
   
   public boolean save(Context c) {
+    SQLiteDatabase db = null;
     try {
-      SQLiteDatabase db = new AlertsDatabase(c).getWritableDatabase();
+      db = new AlertsDatabase(c).getWritableDatabase();
       db.insertOrThrow("alerts", null, asContentValues());
       return true;
     } catch (SQLException e) {
       this.errorCanBeNull = e;
       return false;
+    } finally {
+        if (db != null) {
+          db.close();
+        }
     }
   }
   
   private Either<Alert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
     Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate);
     a.id = this.id;
+    SQLiteDatabase db = null;
     try {
-      SQLiteDatabase db = new AlertsDatabase(c).getWritableDatabase();
+      db = new AlertsDatabase(c).getWritableDatabase();
       db.replaceOrThrow("alerts", null, a.asContentValues());
       return new Right<Alert>(a);
     } catch (SQLException e) {
       a.errorCanBeNull = e;
       return new Left<Alert>(a);
+    } finally {
+        if (db != null) {
+          db.close();
+        }
     }
   }
   

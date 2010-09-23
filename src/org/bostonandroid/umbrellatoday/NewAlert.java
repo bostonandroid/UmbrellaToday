@@ -5,6 +5,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -21,11 +22,13 @@ public class NewAlert extends PreferenceActivity {
       public void onClick(View v) {
         saveAlert().
           onSuccess(new EitherRunner<Alert>() {
-            public void run(Alert a) { 
+            public void run(Alert a) {
               finish();
           }}).
           onFailure(new EitherRunner<Alert>() {
             public void run(Alert a) {
+              Log.d("NewAlert", "failed to add alert: " + a.errorString());
+              // FIXME: this Toast isn't being displayed
               Toast.makeText(getApplicationContext(),
                   "Alert save failed: "+a.errorString(),
                   Toast.LENGTH_LONG);
