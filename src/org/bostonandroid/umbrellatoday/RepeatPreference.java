@@ -3,12 +3,15 @@ package org.bostonandroid.umbrellatoday;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.widget.ListView;
 
 public class RepeatPreference extends ListPreference {
 
@@ -22,8 +25,27 @@ public class RepeatPreference extends ListPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-        	this.currentChoices.addAll(this.newChoices);
+            Log.d("blah", "got a positive result");
+        	this.currentChoices = new ArrayList<String>(this.newChoices);
             this.newChoices.clear();
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        super.onClick(dialogInterface, which);
+
+        CharSequence[] entries = getEntries();
+        AlertDialog alertDialog = (AlertDialog) getDialog();
+        ListView listView = alertDialog.getListView();
+        SparseBooleanArray a = listView.getCheckedItemPositions();
+
+        for (int i = 0; i < entries.length; i++) {
+            String entry = entries[i].toString();
+            if (a.get(i)) {
+                Log.d("blah", entry);
+                this.newChoices.add(entry);
+            }
         }
     }
 
@@ -35,7 +57,7 @@ public class RepeatPreference extends ListPreference {
         boolean[] choices = new boolean[entries.length];
 
         for (int i = 0; i < entries.length; i++) {
-            CharSequence key = entries[i];
+            String key = entries[i].toString();
             choices[i] = currentChoices.contains(key);
         }
 
@@ -43,15 +65,9 @@ public class RepeatPreference extends ListPreference {
                 new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which,
                             boolean isChecked) {
-                        String key = entries[which].toString();
-                        if (isChecked) {
-                        	Log.d("blah", "adding " + key);
-                        	newChoices.add(key);
-                        } else {
-							// do something
-                        }
                     }
                 });
+
     }
 
     public void setChoices(List<String> choices) {
@@ -59,7 +75,6 @@ public class RepeatPreference extends ListPreference {
     }
 
     public List<String> getChoices() {
-    	Log.d("blah", currentChoices.size() + "");
         return currentChoices;
     }
 }

@@ -132,7 +132,6 @@ public class TimePreference extends DialogPreference implements TimePicker.OnTim
         timePicker.clearFocus();
         onTimeChanged(timePicker, timePicker.getCurrentHour(), timePicker
                 .getCurrentMinute());
-        onDialogClosed(which == DialogInterface.BUTTON1); // OK?
     }
 
     public static Date getDateFor(SharedPreferences preferences, String field) {

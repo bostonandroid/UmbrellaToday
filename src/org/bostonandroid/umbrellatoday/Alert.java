@@ -44,15 +44,15 @@ public class Alert {
       Log.i("Alert", "find: c="+c);
       return new Alert(c.getLong(0),
           stringToCalendar(c.getString(1)),
-          c.getString(2) == "true",
-          c.getString(3) == "true",
-          c.getString(4) == "true",
-          c.getString(5) == "true",
-          c.getString(6) == "true",
-          c.getString(7) == "true",
-          c.getString(8) == "true",
+          c.getInt(2) == 1,
+          c.getInt(3) == 1,
+          c.getInt(4) == 1,
+          c.getInt(5) == 1,
+          c.getInt(6) == 1,
+          c.getInt(7) == 1,
+          c.getInt(8) == 1,
           c.getString(9),
-          c.getString(10) == "true");
+          c.getInt(10) == 1);
     } else {
       Log.i("Alert", "find: c.count=0");
       return null;
@@ -104,9 +104,9 @@ public class Alert {
 	  if (this.saturday){
 		  days.add("Saturday");
 	  }
-	  //if (this.sunday) {
+	  if (this.sunday) {
 		  days.add("Sunday");
-	  //}
+	  }
 	  return days;
   }
   public boolean isAutolocate() {
