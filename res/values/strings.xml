@@ -5,13 +5,15 @@
     <string name="about_umbrella_today">About Umbrella Today</string>
     <string name="about_text">Copyright 2010 Boston Android</string>
     <string name="new_location_text">New Location</string>
-<string name="no_alerts">No alerts set.</string>
-<string name="time">Alert Time</string>
-<string name="repeat">Day Repetition</string>
-<string name="location_title">Location</string>
-<string name="detect_location">Use my location</string>
-<string name="location">City</string>
-<string name="new_alert">New Alert</string>
-<string name="save_alert">Add Alert</string>
-<string name="edit_alert">Update Alert</string>
+	<string name="no_alerts">No alerts set.</string>
+	<string name="time">Alert Time</string>
+	<string name="repeat">Day Repetition</string>
+	<string name="location_title">Location</string>
+	<string name="detect_location">Use my location</string>
+	<string name="location">City</string>
+	<string name="new_alert">New Alert</string>
+	<string name="save_alert">Add Alert</string>
+	<string name="edit_alert">Update Alert</string>
+	<string name="widget_name">Umbrella Today Widget</string>
+	<string name="widget_loading">Loading!?!</string>
 </resources>

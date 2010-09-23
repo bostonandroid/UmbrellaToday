@@ -17,9 +17,17 @@
             </intent-filter>
             </activity>
             <activity android:name="NewAlert" android:label="@string/new_alert" />
-                        <activity android:name="EditAlert" android:label="@string/edit_alert" />
+            <activity android:name="EditAlert" android:label="@string/edit_alert" />
 
-<service android:process=":remote" android:name="AlarmService"></service>
+			<receiver android:name=".Widget" android:label="@string/widget_name" >
+				<intent-filter>
+					<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+				</intent-filter>
+				<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget" />
+			</receiver>
+
+			<service android:name=".Widget$UpdateService" />
+			<service android:process=":remote" android:name="AlarmService"></service>
 </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
