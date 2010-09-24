@@ -27,8 +27,7 @@ public class Alerts extends ListActivity {
     LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
     addAlert.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setClass(Alerts.this, NewAlert.class);
+        Intent i = new Intent(Alerts.this, NewAlert.class);
         startActivity(i);
       }
     });
@@ -55,12 +54,11 @@ public class Alerts extends ListActivity {
   @Override
   protected void onListItemClick (ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);
-    Intent i = new Intent(Intent.ACTION_VIEW);
+    Intent i = new Intent(Alerts.this, EditAlert.class);
     Log.i("Alerts", "onListItemClick: cursor="+alertCursor());
     Log.i("Alerts", "onListItemClick: moved="+alertCursor().moveToPosition(position));
     Log.i("Alerts", "onListItemClick: v="+alertCursor().getLong(0));
     i.putExtra("alert_id", alertCursorAdapter().getItemId(position));
-    i.setClass(Alerts.this, EditAlert.class);
     startActivity(i);
   }
 

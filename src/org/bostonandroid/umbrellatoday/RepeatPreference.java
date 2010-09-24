@@ -46,19 +46,23 @@ public class RepeatPreference extends ListPreference {
         }
     }
 
-    @Override
-    protected void onPrepareDialogBuilder(Builder builder) {
-        final CharSequence[] entries = getEntries();
-        //CharSequence[] entryValues = getEntryValues();
-
+    public boolean[] getChoicesBoolean() {
+        CharSequence[] entries = getEntries();
         boolean[] choices = new boolean[entries.length];
-
         for (int i = 0; i < entries.length; i++) {
             String key = entries[i].toString();
             choices[i] = currentChoices.contains(key);
         }
+        return choices;
+    }
 
-        builder.setMultiChoiceItems(entries, choices,
+    @Override
+    protected void onPrepareDialogBuilder(Builder builder) {
+        final CharSequence[] entries = getEntries();
+        // FIXME: use entryValues instead
+        //CharSequence[] entryValues = getEntryValues();
+
+        builder.setMultiChoiceItems(entries, getChoicesBoolean(),
                 new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which,
                             boolean isChecked) {
