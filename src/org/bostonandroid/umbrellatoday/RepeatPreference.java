@@ -24,7 +24,7 @@ public class RepeatPreference extends ListPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-        	this.currentChoices = new ArrayList<String>(this.newChoices);
+            this.currentChoices = new ArrayList<String>(this.newChoices);
             this.newChoices.clear();
         }
     }

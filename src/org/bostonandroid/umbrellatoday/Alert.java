@@ -30,14 +30,14 @@ public class Alert {
   private boolean autolocate;
   
   public static Cursor all(Context c) {
-    SQLiteDatabase db = new AlertsDatabase(c).getReadableDatabase();
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     Cursor x = db.query("alerts", null, null, null, null, null, null);
     return x;
   }
   
   public static Alert find(Context context, long id) {
     Log.i("Alert", "find: id = "+id);
-    SQLiteDatabase db = new AlertsDatabase(context).getReadableDatabase();
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(context).getReadableDatabase();
     Cursor c = db.rawQuery("SELECT * FROM alerts WHERE _id = ?", new String[] {id+""});
     Alert a;
     if (c.getCount() > 0) {
@@ -59,7 +59,6 @@ public class Alert {
       a = null;
     }
     c.close();
-    db.close();
     return a;
   }
   
@@ -89,31 +88,30 @@ public class Alert {
     return this.alertAt;
   }
   
-  public List<String> repeatDays() {
-	  List<String> days = new ArrayList<String>();
-	  if (this.monday) {
-		  days.add("Monday");
-	  }
-	  if (this.tuesday){
-		  days.add("Tuesday");
-	  }
-	  if (this.wednesday) {
-		  days.add("Wednesday");
-	  }
-	  if (this.thursday) {
-		  days.add("Thursday");
-	  }
-	  if (this.friday) {
-		  days.add("Friday");
-	  }
-	  if (this.saturday){
-		  days.add("Saturday");
-	  }
-	  if (this.sunday) {
-		  days.add("Sunday");
-	  }
-	  return days;
-  }
+    public List<String> repeatDays() {
+        String[] dayStrings = {
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday" };
+        boolean[] dayChoices = {
+                this.monday,
+                this.tuesday,
+                this.wednesday,
+                this.thursday,
+                this.friday,
+                this.saturday,
+                this.sunday };
+        List<String> days = new ArrayList<String>();
+        for (int i = 0; i < dayStrings.length; i++) {
+            if (dayChoices[i])
+                days.add(dayStrings[i]);
+        }
+        return days;
+    }
   
   public boolean isAutolocate() {
     return this.autolocate;
@@ -124,36 +122,26 @@ public class Alert {
   }
   
   public boolean save(Context c) {
-    SQLiteDatabase db = null;
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
-      db = new AlertsDatabase(c).getWritableDatabase();
-      db.insertOrThrow("alerts", null, asContentValues());
+      this.id = db.insertOrThrow("alerts", null, asContentValues());
       return true;
     } catch (SQLException e) {
       this.errorCanBeNull = e;
       return false;
-    } finally {
-        if (db != null) {
-          db.close();
-        }
     }
   }
   
   private Either<Alert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
     Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate);
     a.id = this.id;
-    SQLiteDatabase db = null;
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
-      db = new AlertsDatabase(c).getWritableDatabase();
       db.replaceOrThrow("alerts", null, a.asContentValues());
       return new Right<Alert>(a);
     } catch (SQLException e) {
       a.errorCanBeNull = e;
       return new Left<Alert>(a);
-    } finally {
-        if (db != null) {
-          db.close();
-        }
     }
   }
   
@@ -167,6 +155,7 @@ public class Alert {
   
   private ContentValues asContentValues() {
     ContentValues cv = new ContentValues();
+    // FIXME: this is hack
     if (this.id != -1) {
       cv.put("_id", this.id);
     }
