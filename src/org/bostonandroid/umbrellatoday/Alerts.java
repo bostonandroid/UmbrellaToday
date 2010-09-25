@@ -61,6 +61,8 @@ public class Alerts extends ListActivity {
 
     private void deleteAlert(long id) {
         Alert.find(this, id).delete(this);
+        // FIXME: why doesn't this run automatically?
+        alertCursor().requery();
     }
 
     private void editAlert(long id) {

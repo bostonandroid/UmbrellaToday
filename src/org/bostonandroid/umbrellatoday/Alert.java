@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -28,7 +30,23 @@ public class Alert {
   private boolean saturday;
   private String location;
   private boolean autolocate;
-  
+
+  private static final HashMap<String, Integer> DAYS_MAP = initializeDaysMap();
+
+  private static final HashMap<String, Integer> initializeDaysMap() {
+    HashMap<String, Integer> daysMap = new HashMap<String, Integer>();
+
+    daysMap.put("Monday", Calendar.MONDAY);
+    daysMap.put("Tuesday", Calendar.TUESDAY);
+    daysMap.put("Wednesday", Calendar.WEDNESDAY);
+    daysMap.put("Thursday", Calendar.THURSDAY);
+    daysMap.put("Friday", Calendar.FRIDAY);
+    daysMap.put("Saturday", Calendar.SATURDAY);
+    daysMap.put("Sunday", Calendar.SUNDAY);
+
+    return daysMap;
+  }
+
   public static Cursor all(Context c) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     Cursor x = db.query("alerts", null, null, null, null, null, null);
@@ -106,7 +124,7 @@ public class Alert {
                 this.saturday,
                 this.sunday };
         List<String> days = new ArrayList<String>();
-        for (int i = 0; i < dayStrings.length; i++) {
+        for (int i = 0; i < 7; i++) {
             if (dayChoices[i])
                 days.add(dayStrings[i]);
         }
@@ -125,11 +143,82 @@ public class Alert {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
       this.id = db.insertOrThrow("alerts", null, asContentValues());
+      // FIXME: this probably shouldn't be here
+      Alert next = findNextAlert(c);
+      Log.d("Alert", "next alert: " + next.id);
       return true;
     } catch (SQLException e) {
       this.errorCanBeNull = e;
       return false;
     }
+  }
+
+  public static Alert findNextAlert(Context context) {
+    Alert alert = null;
+
+    Cursor cur = Alert.all(context);
+    Long minTime = Long.MAX_VALUE;
+
+    while (cur.moveToNext()) {
+      Alert a = new Alert(cur.getLong(0),
+          stringToCalendar(cur.getString(1)),
+          cur.getInt(2) == 1,
+          cur.getInt(3) == 1,
+          cur.getInt(4) == 1,
+          cur.getInt(5) == 1,
+          cur.getInt(6) == 1,
+          cur.getInt(7) == 1,
+          cur.getInt(8) == 1,
+          cur.getString(9),
+          cur.getInt(10) == 1);
+
+      Calendar cal = a.calculateAlert();
+
+      if (cal.getTimeInMillis() < minTime) {
+        minTime = cal.getTimeInMillis();
+        alert = a;
+      }
+    }
+    return alert;
+  }
+
+  public Calendar calculateAlert() {
+    int hour = alertAt().get(Calendar.HOUR_OF_DAY);
+    int minute = alertAt().get(Calendar.MINUTE);
+    List<String> days = repeatDays();
+
+    Calendar c = new GregorianCalendar();
+    c.setTimeInMillis(System.currentTimeMillis());
+
+    if (hour < c.get(Calendar.HOUR_OF_DAY) ||
+          hour == c.get(Calendar.HOUR_OF_DAY)
+          && minute <= c.get(Calendar.MINUTE))
+      c.add(Calendar.DAY_OF_WEEK, 1);
+
+    c.set(Calendar.HOUR_OF_DAY, hour);
+    c.set(Calendar.MINUTE, minute);
+    c.set(Calendar.SECOND, 0);
+    c.set(Calendar.MILLISECOND, 0);
+
+    int currentDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+    Iterator<String> iterator = days.iterator();
+    int minDayOfWeek = days.isEmpty() ? currentDayOfWeek :
+      c.getActualMaximum(Calendar.DAY_OF_WEEK);
+
+    while (iterator.hasNext()) {
+      String iteratorValue = iterator.next();
+      int selectedDayOfWeek = DAYS_MAP.get(iteratorValue);
+      if (selectedDayOfWeek <= currentDayOfWeek)
+        minDayOfWeek = selectedDayOfWeek;
+    }
+
+    if (minDayOfWeek < currentDayOfWeek)
+      c.add(Calendar.WEEK_OF_YEAR, 1);
+
+    c.set(Calendar.DAY_OF_WEEK, minDayOfWeek);
+
+    return c;
   }
 
   public boolean delete(Context c) {
@@ -149,6 +238,9 @@ public class Alert {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
       db.replaceOrThrow("alerts", null, a.asContentValues());
+      // FIXME: this probably shouldn't be here
+      Alert next = findNextAlert(c);
+      Log.d("Alert", "next alert: " + next.id);
       return new Right<Alert>(a);
     } catch (SQLException e) {
       a.errorCanBeNull = e;

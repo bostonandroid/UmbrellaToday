@@ -1,5 +1,8 @@
 package org.bostonandroid.umbrellatoday;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -23,20 +26,27 @@ public class NewAlert extends PreferenceActivity {
         saveAlert().
           onSuccess(new EitherRunner<Alert>() {
             public void run(Alert a) {
+              Calendar nextAlert = a.calculateAlert();
+              Toast.makeText(getApplicationContext(),
+                  "Alarm set for " + formatter().format(nextAlert.getTime()),
+                  Toast.LENGTH_LONG).show();
               finish();
           }}).
           onFailure(new EitherRunner<Alert>() {
             public void run(Alert a) {
               Log.d("NewAlert", "failed to add alert: " + a.errorString());
-              // FIXME: this Toast isn't being displayed
               Toast.makeText(getApplicationContext(),
                   "Alert save failed: "+a.errorString(),
-                  Toast.LENGTH_LONG);
+                  Toast.LENGTH_LONG).show();
           }});
       }
     });
   }
-  
+
+  private static SimpleDateFormat formatter() {
+      return new SimpleDateFormat("EEEE, MMMM d 'at' HH:mm");
+  }
+
   private Either<Alert> saveAlert() {
     PreferenceManager pm = getPreferenceManager();
     Alert.Builder alertBuilder = new Alert.Builder();
