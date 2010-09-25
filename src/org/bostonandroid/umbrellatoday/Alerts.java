@@ -60,7 +60,11 @@ public class Alerts extends ListActivity {
   }
 
     private void deleteAlert(long id) {
-        Alert.find(this, id).delete(this);
+        Alert.find(this, id).perform(new EitherRunner<SavedAlert>() {
+          public void run(SavedAlert a) {
+            a.delete(Alerts.this);
+          }
+        });
         // FIXME: why doesn't this run automatically?
         alertCursor().requery();
     }

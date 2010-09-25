@@ -20,41 +20,44 @@ public class EditAlert extends PreferenceActivity {
     setContentView(R.layout.edit_alert);
     
     Long alert_id = (Long)getIntent().getExtras().get("alert_id");
-    final Alert alert = Alert.find(this,alert_id);
-    ((TimePreference)findPreference("time")).setTime(alert.alertAt());
-    ((RepeatPreference)findPreference("repeat")).setChoices(alert.repeatDays());
-    ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
-    ((EditTextPreference)findPreference("location")).setText(alert.location());
-    
-    Button nextButton = (Button)findViewById(R.id.edit_alert);
-    nextButton.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) {
-        updateAlert(alert).
-          onSuccess(new EitherRunner<Alert>() {
-            public void run(Alert a) {
-              Calendar nextAlert = a.calculateAlert();
-              Toast.makeText(getApplicationContext(),
-                  "Alarm set for " + formatter().format(nextAlert.getTime()),
-                  Toast.LENGTH_LONG).show();
-              finish();
-          }}).
-          onFailure(new EitherRunner<Alert>() {
-            public void run(Alert a) {
-              Toast.makeText(getApplicationContext(),
-                  "Alert update failed: "+a.errorString(),
-                  Toast.LENGTH_LONG).show();
-          }});
-      }
-    });
+    Alert.find(this,alert_id).perform(new EitherRunner<SavedAlert>() {
+      public void run(SavedAlert alert) {
+        final SavedAlert a = alert; // for the onClick
+        ((TimePreference)findPreference("time")).setTime(alert.alertAt());
+        ((RepeatPreference)findPreference("repeat")).setChoices(alert.repeatDays());
+        ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
+        ((EditTextPreference)findPreference("location")).setText(alert.location());
+        
+        Button nextButton = (Button)findViewById(R.id.edit_alert);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+          public void onClick(View v) {
+            updateAlert(a).
+              onSuccess(new EitherRunner<SavedAlert>() {
+                public void run(SavedAlert a) {
+                  Calendar nextAlert = a.alertAt();
+                  Toast.makeText(getApplicationContext(),
+                      "Alarm set for " + formatter().format(nextAlert.getTime()),
+                      Toast.LENGTH_LONG).show();
+                  finish();
+              }}).
+              onFailure(new EitherRunner<SavedAlert>() {
+                public void run(SavedAlert a) {
+                  Toast.makeText(getApplicationContext(),
+                      "Alert update failed: "+a.errorString(),
+                      Toast.LENGTH_LONG).show();
+              }});
+          }
+        });
+      }});
   }
 
   private static SimpleDateFormat formatter() {
       return new SimpleDateFormat("EEEE, MMMM d 'at' HH:mm");
   }
 
-  private Either<Alert> updateAlert(Alert a) {
+  private Either<SavedAlert> updateAlert(SavedAlert a) {
     PreferenceManager pm = getPreferenceManager();
-    Alert.Updater alertUpdater = a.updater().
+    SavedAlert.Updater alertUpdater = a.updater().
       alertAt(((TimePreference)pm.findPreference("time")).getTime()).
       repeatDays(((RepeatPreference)pm.findPreference("repeat")).getChoices()).
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).

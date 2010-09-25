@@ -24,9 +24,9 @@ public class NewAlert extends PreferenceActivity {
     nextButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         saveAlert().
-          onSuccess(new EitherRunner<Alert>() {
-            public void run(Alert a) {
-              Calendar nextAlert = a.calculateAlert();
+          onSuccess(new EitherRunner<SavedAlert>() {
+            public void run(SavedAlert a) {
+              Calendar nextAlert = a.alertAt();
               Toast.makeText(getApplicationContext(),
                   "Alarm set for " + formatter().format(nextAlert.getTime()),
                   Toast.LENGTH_LONG).show();
@@ -47,21 +47,15 @@ public class NewAlert extends PreferenceActivity {
       return new SimpleDateFormat("EEEE, MMMM d 'at' HH:mm");
   }
 
-  private Either<Alert> saveAlert() {
+  private AlertOrError saveAlert() {
     PreferenceManager pm = getPreferenceManager();
     Alert.Builder alertBuilder = new Alert.Builder();
-    Alert alert = alertBuilder.
+    // TODO: this #save needs to be async.
+    return alertBuilder.
       alertAt(((TimePreference)pm.findPreference("time")).getTime()).
       repeatDays(((RepeatPreference)pm.findPreference("repeat")).getChoices()).
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText()).
-      build();
-    /// TODO: this #save needs to be async.
-    return makeAlertFailure(alert, alert.save(getApplicationContext()));
-  }
-  
-  private Either<Alert> makeAlertFailure(Alert a, boolean saved) {
-    if (saved) return new Right<Alert>(a);
-    else return new Left<Alert>(a);
+      save(this);
   }
 }
