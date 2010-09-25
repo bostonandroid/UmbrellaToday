@@ -102,10 +102,56 @@ public class Alert {
     this.autolocate = autolocate;
   }
   
-  public Calendar alertAt() {
-    return this.alertAt;
+  public boolean isRepeating() {
+    return this.monday || this.tuesday || this.wednesday || this.thursday || this.friday || this.saturday || this.sunday;
   }
-  
+
+  public Calendar alertAt() {
+    int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
+    int minute = this.alertAt.get(Calendar.MINUTE);
+
+    Calendar c = new GregorianCalendar();
+    c.setTimeInMillis(System.currentTimeMillis());
+
+    if (hour < c.get(Calendar.HOUR_OF_DAY) ||
+          hour == c.get(Calendar.HOUR_OF_DAY)
+          && minute <= c.get(Calendar.MINUTE))
+      c.add(Calendar.DAY_OF_WEEK, 1);
+
+    c.set(Calendar.HOUR_OF_DAY, hour);
+    c.set(Calendar.MINUTE, minute);
+    c.set(Calendar.SECOND, 0);
+    c.set(Calendar.MILLISECOND, 0);
+
+    if (isRepeating())
+      return alertAtRepeating(c);
+    else
+      return c;
+  }
+
+  public Calendar alertAtRepeating(Calendar c) {
+    List<String> days = repeatDays();
+
+    int currentDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+    Iterator<String> iterator = days.iterator();
+    int minDayOfWeek = c.getActualMaximum(Calendar.DAY_OF_WEEK);
+
+    while (iterator.hasNext()) {
+      String iteratorValue = iterator.next();
+      int selectedDayOfWeek = DAYS_MAP.get(iteratorValue);
+      if (selectedDayOfWeek <= currentDayOfWeek)
+        minDayOfWeek = selectedDayOfWeek;
+    }
+
+    if (minDayOfWeek < currentDayOfWeek)
+      c.add(Calendar.WEEK_OF_YEAR, 1);
+
+    c.set(Calendar.DAY_OF_WEEK, minDayOfWeek);
+
+    return c;
+  }
+
     public List<String> repeatDays() {
         String[] dayStrings = {
                 "Monday",
@@ -172,7 +218,7 @@ public class Alert {
           cur.getString(9),
           cur.getInt(10) == 1);
 
-      Calendar cal = a.calculateAlert();
+      Calendar cal = a.alertAt();
 
       if (cal.getTimeInMillis() < minTime) {
         minTime = cal.getTimeInMillis();
@@ -180,45 +226,6 @@ public class Alert {
       }
     }
     return alert;
-  }
-
-  public Calendar calculateAlert() {
-    int hour = alertAt().get(Calendar.HOUR_OF_DAY);
-    int minute = alertAt().get(Calendar.MINUTE);
-    List<String> days = repeatDays();
-
-    Calendar c = new GregorianCalendar();
-    c.setTimeInMillis(System.currentTimeMillis());
-
-    if (hour < c.get(Calendar.HOUR_OF_DAY) ||
-          hour == c.get(Calendar.HOUR_OF_DAY)
-          && minute <= c.get(Calendar.MINUTE))
-      c.add(Calendar.DAY_OF_WEEK, 1);
-
-    c.set(Calendar.HOUR_OF_DAY, hour);
-    c.set(Calendar.MINUTE, minute);
-    c.set(Calendar.SECOND, 0);
-    c.set(Calendar.MILLISECOND, 0);
-
-    int currentDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-
-    Iterator<String> iterator = days.iterator();
-    int minDayOfWeek = days.isEmpty() ? currentDayOfWeek :
-      c.getActualMaximum(Calendar.DAY_OF_WEEK);
-
-    while (iterator.hasNext()) {
-      String iteratorValue = iterator.next();
-      int selectedDayOfWeek = DAYS_MAP.get(iteratorValue);
-      if (selectedDayOfWeek <= currentDayOfWeek)
-        minDayOfWeek = selectedDayOfWeek;
-    }
-
-    if (minDayOfWeek < currentDayOfWeek)
-      c.add(Calendar.WEEK_OF_YEAR, 1);
-
-    c.set(Calendar.DAY_OF_WEEK, minDayOfWeek);
-
-    return c;
   }
 
   public boolean delete(Context c) {

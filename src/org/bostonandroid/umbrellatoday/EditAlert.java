@@ -32,9 +32,9 @@ public class EditAlert extends PreferenceActivity {
         updateAlert(alert).
           onSuccess(new EitherRunner<Alert>() {
             public void run(Alert a) {
-              Calendar nextAlert = a.calculateAlert();
+              Calendar alertAt = a.alertAt();
               Toast.makeText(getApplicationContext(),
-                  "Alarm set for " + formatter().format(nextAlert.getTime()),
+                  "Alarm set for " + formatter().format(alertAt.getTime()),
                   Toast.LENGTH_LONG).show();
               finish();
           }}).
