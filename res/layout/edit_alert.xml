@@ -11,7 +11,7 @@
   <LinearLayout android:layout_width="fill_parent"
     android:layout_height="wrap_content" android:orientation="horizontal"
     style="@android:style/ButtonBar">
-    <Button android:text="@string/edit_alert" android:id="@+id/edit_alert"
+    <Button android:text="@string/update_alert" android:id="@+id/update_alert"
       android:layout_width="wrap_content" android:layout_height="wrap_content" />
   </LinearLayout>
 </LinearLayout>
