@@ -28,7 +28,7 @@ public class EditAlert extends PreferenceActivity {
         ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
         ((EditTextPreference)findPreference("location")).setText(alert.location());
         
-        Button nextButton = (Button)findViewById(R.id.edit_alert);
+        Button nextButton = (Button)findViewById(R.id.update_alert);
         nextButton.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) {
             updateAlert(a).

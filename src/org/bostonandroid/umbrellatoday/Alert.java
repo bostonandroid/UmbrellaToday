@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -25,6 +26,8 @@ public class Alert {
   private boolean saturday;
   private String location;
   private boolean autolocate;
+  
+  private static final HashMap<String, Integer> DAYS_MAP = initializeDaysMap();
 
   private static final HashMap<String, Integer> initializeDaysMap() {
     HashMap<String, Integer> daysMap = new HashMap<String, Integer>();
@@ -63,8 +66,31 @@ public class Alert {
     this.autolocate = autolocate;
   }
   
+  public boolean isRepeating() {
+    return this.monday || this.tuesday || this.wednesday || this.thursday || this.friday || this.saturday || this.sunday;
+  }
+
   public Calendar alertAt() {
-    return this.alertAt;
+    int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
+    int minute = this.alertAt.get(Calendar.MINUTE);
+
+    Calendar c = new GregorianCalendar();
+    c.setTimeInMillis(System.currentTimeMillis());
+
+    if (hour < c.get(Calendar.HOUR_OF_DAY) ||
+          hour == c.get(Calendar.HOUR_OF_DAY)
+          && minute <= c.get(Calendar.MINUTE))
+      c.add(Calendar.DAY_OF_WEEK, 1);
+
+    c.set(Calendar.HOUR_OF_DAY, hour);
+    c.set(Calendar.MINUTE, minute);
+    c.set(Calendar.SECOND, 0);
+    c.set(Calendar.MILLISECOND, 0);
+
+    if (isRepeating())
+      return alertAtRepeating(c);
+    else
+      return c;
   }
 
   public List<String> repeatDays() {
@@ -91,7 +117,30 @@ public class Alert {
     }
     return days;
   }
-  
+
+  public Calendar alertAtRepeating(Calendar c) {
+    List<String> days = repeatDays();
+
+    int currentDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+    Iterator<String> iterator = days.iterator();
+    int minDayOfWeek = c.getActualMaximum(Calendar.DAY_OF_WEEK);
+
+    while (iterator.hasNext()) {
+      String iteratorValue = iterator.next();
+      int selectedDayOfWeek = DAYS_MAP.get(iteratorValue);
+      if (selectedDayOfWeek <= currentDayOfWeek)
+        minDayOfWeek = selectedDayOfWeek;
+    }
+
+    if (minDayOfWeek < currentDayOfWeek)
+      c.add(Calendar.WEEK_OF_YEAR, 1);
+
+    c.set(Calendar.DAY_OF_WEEK, minDayOfWeek);
+
+    return c;
+  }
+
   public boolean isAutolocate() {
     return this.autolocate;
   }
@@ -103,7 +152,7 @@ public class Alert {
   public static Maybe<SavedAlert> findNextAlert(Context context) {
     return SavedAlert.findNextAlert(Alert.all(context));
   }
-  
+
   private AlertOrError save(Context c) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
