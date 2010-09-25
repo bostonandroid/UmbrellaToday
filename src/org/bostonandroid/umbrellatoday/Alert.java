@@ -131,6 +131,17 @@ public class Alert {
       return false;
     }
   }
+
+  public boolean delete(Context c) {
+      SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
+      try {
+        db.delete("alerts", "_id=?", new String[] { Long.toString(this.id) });
+        return true;
+      } catch (SQLException e) {
+        this.errorCanBeNull = e;
+        return false;
+      }
+    }
   
   private Either<Alert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
     Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate);

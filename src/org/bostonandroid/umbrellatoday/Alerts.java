@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class Alerts extends ListActivity {
   private CursorAdapter alertCursorAdapter;
@@ -31,7 +34,40 @@ public class Alerts extends ListActivity {
         startActivity(i);
       }
     });
+    registerForContextMenu(getListView());
   }
+
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    super.onCreateContextMenu(menu, v, menuInfo);
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.context_menu, menu);
+  }
+  
+  @Override
+  public boolean onContextItemSelected(MenuItem item) {
+    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    switch (item.getItemId()) {
+    case R.id.edit:
+      editAlert(info.id);
+      return true;
+    case R.id.delete:
+      deleteAlert(info.id);
+      return true;
+    default:
+      return super.onContextItemSelected(item);
+    }
+  }
+
+    private void deleteAlert(long id) {
+        Alert.find(this, id).delete(this);
+    }
+
+    private void editAlert(long id) {
+        Intent i = new Intent(Alerts.this, EditAlert.class);
+        i.putExtra("alert_id", id);
+        startActivity(i);
+    }
 
   private Cursor alertCursor() {
       if (this.alertCursor == null) {
@@ -54,12 +90,10 @@ public class Alerts extends ListActivity {
   @Override
   protected void onListItemClick (ListView l, View v, int position, long id) {
     super.onListItemClick(l, v, position, id);
-    Intent i = new Intent(Alerts.this, EditAlert.class);
     Log.i("Alerts", "onListItemClick: cursor="+alertCursor());
     Log.i("Alerts", "onListItemClick: moved="+alertCursor().moveToPosition(position));
     Log.i("Alerts", "onListItemClick: v="+alertCursor().getLong(0));
-    i.putExtra("alert_id", alertCursorAdapter().getItemId(position));
-    startActivity(i);
+    editAlert(alertCursorAdapter().getItemId(position));
   }
 
   @Override
