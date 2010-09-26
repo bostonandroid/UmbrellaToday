@@ -11,6 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateUtils;
 
 public class Alert {
   private Exception errorCanBeNull;
@@ -24,18 +25,6 @@ public class Alert {
   private boolean saturday;
   private String location;
   private boolean autolocate;
-  
-  private static final String[] DAYS_MAP = new String[8];
-
-  static {
-    DAYS_MAP[Calendar.SUNDAY] = "Sunday";
-    DAYS_MAP[Calendar.MONDAY] = "Monday";
-    DAYS_MAP[Calendar.TUESDAY] = "Tuesday";
-    DAYS_MAP[Calendar.WEDNESDAY] = "Wednesday";
-    DAYS_MAP[Calendar.THURSDAY] = "Thursday";
-    DAYS_MAP[Calendar.FRIDAY] = "Friday";
-    DAYS_MAP[Calendar.SATURDAY] = "Saturday";
-  }
 
   public static Cursor all(Context c) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
@@ -80,7 +69,7 @@ public class Alert {
   }
   
   private boolean repeatsFor(Calendar c) {
-    return repeatDays().contains(DAYS_MAP[c.get(Calendar.DAY_OF_WEEK)]);
+    return repeatDays().contains(DateUtils.getDayOfWeekString(Calendar.DAY_OF_WEEK, DateUtils.LENGTH_LONG));
   }
   
   private boolean wasAlertedAfterNow() {
