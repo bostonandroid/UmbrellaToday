@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -27,20 +25,16 @@ public class Alert {
   private String location;
   private boolean autolocate;
   
-  private static final HashMap<String, Integer> DAYS_MAP = initializeDaysMap();
+  private static final String[] DAYS_MAP = new String[8];
 
-  private static final HashMap<String, Integer> initializeDaysMap() {
-    HashMap<String, Integer> daysMap = new HashMap<String, Integer>();
-
-    daysMap.put("Monday", Calendar.MONDAY);
-    daysMap.put("Tuesday", Calendar.TUESDAY);
-    daysMap.put("Wednesday", Calendar.WEDNESDAY);
-    daysMap.put("Thursday", Calendar.THURSDAY);
-    daysMap.put("Friday", Calendar.FRIDAY);
-    daysMap.put("Saturday", Calendar.SATURDAY);
-    daysMap.put("Sunday", Calendar.SUNDAY);
-
-    return daysMap;
+  static {
+    DAYS_MAP[Calendar.SUNDAY] = "Sunday";
+    DAYS_MAP[Calendar.MONDAY] = "Monday";
+    DAYS_MAP[Calendar.TUESDAY] = "Tuesday";
+    DAYS_MAP[Calendar.WEDNESDAY] = "Wednesday";
+    DAYS_MAP[Calendar.THURSDAY] = "Thursday";
+    DAYS_MAP[Calendar.FRIDAY] = "Friday";
+    DAYS_MAP[Calendar.SATURDAY] = "Saturday";
   }
 
   public static Cursor all(Context c) {
@@ -71,26 +65,27 @@ public class Alert {
   }
 
   public Calendar alertAt() {
-    int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
-    int minute = this.alertAt.get(Calendar.MINUTE);
-
-    Calendar c = new GregorianCalendar();
-    c.setTimeInMillis(System.currentTimeMillis());
-
-    if (hour < c.get(Calendar.HOUR_OF_DAY) ||
-          hour == c.get(Calendar.HOUR_OF_DAY)
-          && minute <= c.get(Calendar.MINUTE))
-      c.add(Calendar.DAY_OF_WEEK, 1);
-
-    c.set(Calendar.HOUR_OF_DAY, hour);
-    c.set(Calendar.MINUTE, minute);
-    c.set(Calendar.SECOND, 0);
-    c.set(Calendar.MILLISECOND, 0);
-
     if (isRepeating())
-      return alertAtRepeating(c);
+      if (repeatsFor(this.alertAt))
+        if (wasAlertedAfterNow())
+          return this.alertAt;
+        else
+          return alertAtRepeating(this.alertAt);
+      else
+        return alertAtRepeating(this.alertAt);
+    else if (wasAlertedAfterNow())
+      return nextDay(this.alertAt);
     else
-      return c;
+      return this.alertAt;
+  }
+  
+  private boolean repeatsFor(Calendar c) {
+    return repeatDays().contains(DAYS_MAP[c.get(Calendar.DAY_OF_WEEK)]);
+  }
+  
+  private boolean wasAlertedAfterNow() {
+    Calendar now = new GregorianCalendar();
+    return this.alertAt.getTimeInMillis() > now.getTimeInMillis();
   }
 
   public List<String> repeatDays() {
@@ -117,28 +112,23 @@ public class Alert {
     }
     return days;
   }
-
-  public Calendar alertAtRepeating(Calendar c) {
-    List<String> days = repeatDays();
-
-    int currentDayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-
-    Iterator<String> iterator = days.iterator();
-    int minDayOfWeek = c.getActualMaximum(Calendar.DAY_OF_WEEK);
-
-    while (iterator.hasNext()) {
-      String iteratorValue = iterator.next();
-      int selectedDayOfWeek = DAYS_MAP.get(iteratorValue);
-      if (selectedDayOfWeek <= currentDayOfWeek)
-        minDayOfWeek = selectedDayOfWeek;
-    }
-
-    if (minDayOfWeek < currentDayOfWeek)
-      c.add(Calendar.WEEK_OF_YEAR, 1);
-
-    c.set(Calendar.DAY_OF_WEEK, minDayOfWeek);
-
-    return c;
+  
+  private Calendar alertAtRepeating(Calendar c) {
+    return alertAtRepeatingAux(nextDay(c));
+  }
+  
+  private Calendar alertAtRepeatingAux(Calendar c) {
+    if (repeatsFor(c))
+      return c;
+    else
+      return alertAtRepeatingAux(nextDay(c));
+  }
+  
+  private Calendar nextDay(Calendar c) {
+    Calendar nextC = new GregorianCalendar();
+    c.setTime(c.getTime());
+    nextC.add(Calendar.DAY_OF_WEEK, 1);
+    return nextC;
   }
 
   public boolean isAutolocate() {
