@@ -25,17 +25,13 @@ public class Alert {
   private String location;
   private boolean autolocate;
   
-  private static final String[] DAYS_MAP = new String[8];
-
-  static {
-    DAYS_MAP[Calendar.SUNDAY] = "Sunday";
-    DAYS_MAP[Calendar.MONDAY] = "Monday";
-    DAYS_MAP[Calendar.TUESDAY] = "Tuesday";
-    DAYS_MAP[Calendar.WEDNESDAY] = "Wednesday";
-    DAYS_MAP[Calendar.THURSDAY] = "Thursday";
-    DAYS_MAP[Calendar.FRIDAY] = "Friday";
-    DAYS_MAP[Calendar.SATURDAY] = "Saturday";
-  }
+  private static final String[] WEEKDAYS = { "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday" };
 
   public static Cursor all(Context c) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
@@ -74,43 +70,17 @@ public class Alert {
       else
         return alertAtRepeating(this.alertAt);
     else if (wasAlertedAfterNow())
-      return nextDay(this.alertAt);
-    else
       return this.alertAt;
+    else
+      return nextDay(this.alertAt);
   }
   
   private boolean repeatsFor(Calendar c) {
-    return repeatDays().contains(DAYS_MAP[c.get(Calendar.DAY_OF_WEEK)]);
+    return repeatDays().contains(WEEKDAYS[c.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY]);
   }
   
   private boolean wasAlertedAfterNow() {
-    Calendar now = new GregorianCalendar();
-    return this.alertAt.getTimeInMillis() > now.getTimeInMillis();
-  }
-
-  public List<String> repeatDays() {
-    String[] dayStrings = {
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-    "Sunday" };
-    boolean[] dayChoices = {
-        this.monday,
-        this.tuesday,
-        this.wednesday,
-        this.thursday,
-        this.friday,
-        this.saturday,
-        this.sunday };
-    List<String> days = new ArrayList<String>();
-    for (int i = 0; i < 7; i++) {
-      if (dayChoices[i])
-        days.add(dayStrings[i]);
-    }
-    return days;
+    return this.alertAt.getTimeInMillis() > System.currentTimeMillis();
   }
   
   private Calendar alertAtRepeating(Calendar c) {
@@ -126,9 +96,34 @@ public class Alert {
   
   private Calendar nextDay(Calendar c) {
     Calendar nextC = new GregorianCalendar();
-    c.setTime(c.getTime());
+    nextC.setTime(c.getTime());
     nextC.add(Calendar.DAY_OF_WEEK, 1);
     return nextC;
+  }
+
+  public List<String> repeatDays() {
+    String[] dayStrings = {
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday" };
+    boolean[] dayChoices = {
+        this.monday,
+        this.tuesday,
+        this.wednesday,
+        this.thursday,
+        this.friday,
+        this.saturday,
+        this.sunday };
+    List<String> days = new ArrayList<String>();
+    for (int i = 0; i < 7; i++) {
+      if (dayChoices[i])
+        days.add(dayStrings[i]);
+    }
+    return days;
   }
 
   public boolean isAutolocate() {
