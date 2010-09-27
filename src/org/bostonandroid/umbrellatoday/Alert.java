@@ -61,13 +61,13 @@ public class Alert {
   }
   
   public Calendar alertAt() {
-    return alertAtAux(alertAtAbsolute());
+    return alertAtAux(alertAtAbsolute(now()));
   }
 
-  private Calendar alertAtAbsolute() {
-    int year = now().get(Calendar.YEAR);
-    int month = now().get(Calendar.MONTH);
-    int day = now().get(Calendar.DAY_OF_MONTH);
+  private Calendar alertAtAbsolute(Calendar now) {
+    int year = now.get(Calendar.YEAR);
+    int month = now.get(Calendar.MONTH);
+    int day = now.get(Calendar.DAY_OF_MONTH);
     int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
     int minute = this.alertAt.get(Calendar.MINUTE);
     return new GregorianCalendar(year, month, day, hour, minute);
