@@ -59,30 +59,43 @@ public class Alert {
   public boolean isRepeating() {
     return this.monday || this.tuesday || this.wednesday || this.thursday || this.friday || this.saturday || this.sunday;
   }
-
-  public Calendar alertAt() {
-    if (isRepeating())
-      if (repeatsFor(this.alertAt))
-        if (wasAlertedAfterNow())
-          return this.alertAt;
-        else
-          return alertAtRepeating(this.alertAt);
-      else
-        return alertAtRepeating(this.alertAt);
-    else if (wasAlertedAfterNow())
-      return this.alertAt;
-    else
-      return nextDay(this.alertAt);
-  }
   
+  public Calendar alertAt() {
+    return alertAtAux(alertAtAbsolute());
+  }
+
+  private Calendar alertAtAbsolute() {
+    int year = now().get(Calendar.YEAR);
+    int month = now().get(Calendar.MONTH);
+    int day = now().get(Calendar.DAY_OF_MONTH);
+    int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
+    int minute = this.alertAt.get(Calendar.MINUTE);
+    return new GregorianCalendar(year, month, day, hour, minute);
+  }
+
+  public Calendar alertAtAux(Calendar calendar) {
+    if (isRepeating())
+      if (repeatsFor(now()))
+        if (calendar.after(now()))
+          return calendar;
+        else
+          return alertAtRepeating(calendar);
+      else
+        return alertAtRepeating(calendar);
+    else if (calendar.after(now()))
+      return calendar;
+    else
+      return nextDay(calendar);
+  }
+
+  private Calendar now() {
+    return new GregorianCalendar();
+  }
+
   private boolean repeatsFor(Calendar c) {
     return repeatDays().contains(WEEKDAYS[c.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY]);
   }
-  
-  private boolean wasAlertedAfterNow() {
-    return this.alertAt.getTimeInMillis() > System.currentTimeMillis();
-  }
-  
+    
   private Calendar alertAtRepeating(Calendar c) {
     return alertAtRepeatingAux(nextDay(c));
   }
