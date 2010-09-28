@@ -130,10 +130,11 @@ class SavedAlert {
     return this.alert.alertAt();
   }
 
-  public boolean delete(Context c) {
+  public boolean delete(Context c, Runnable f) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getWritableDatabase();
     try {
       db.delete("alerts", "_id=?", new String[] { Long.toString(this.id) });
+      f.run();
       return true;
     } catch (SQLException e) {
       this.errorCanBeNull = e;

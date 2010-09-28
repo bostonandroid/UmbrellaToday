@@ -62,7 +62,7 @@ public class Alerts extends ListActivity {
     private void deleteAlert(long id) {
         Alert.find(this, id).perform(new ValueRunner<SavedAlert>() {
           public void run(SavedAlert a) {
-            a.delete(Alerts.this);
+            a.delete(Alerts.this, new AlarmSetter(Alerts.this));
           }
         });
         // FIXME: why doesn't this run automatically?
