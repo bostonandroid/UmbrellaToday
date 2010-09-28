@@ -107,6 +107,7 @@ class SavedAlert {
       else
         return findNextAlert(cursor, minTime, nextAlert);
     } else {
+      cursor.close();
       return nextAlert;
     }
   }
