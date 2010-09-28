@@ -59,28 +59,28 @@ public class Alerts extends ListActivity {
     }
   }
 
-    private void deleteAlert(long id) {
-        Alert.find(this, id).perform(new ValueRunner<SavedAlert>() {
-          public void run(SavedAlert a) {
-            a.delete(Alerts.this, new AlarmSetter(Alerts.this));
-          }
-        });
-        // FIXME: why doesn't this run automatically?
-        alertCursor().requery();
-    }
+  private void deleteAlert(long id) {
+    Alert.find(this, id).perform(new ValueRunner<SavedAlert>() {
+      public void run(SavedAlert a) {
+        a.delete(Alerts.this, new AlarmSetter(Alerts.this));
+      }
+    });
+    // FIXME: why doesn't this run automatically?
+    alertCursor().requery();
+  }
 
-    private void editAlert(long id) {
-        Intent i = new Intent(Alerts.this, EditAlert.class);
-        i.putExtra("alert_id", id);
-        startActivity(i);
-    }
+  private void editAlert(long id) {
+    Intent i = new Intent(Alerts.this, EditAlert.class);
+    i.putExtra("alert_id", id);
+    startActivity(i);
+  }
 
   private Cursor alertCursor() {
-      if (this.alertCursor == null) {
-          this.alertCursor = Alert.all(this);
-          startManagingCursor(this.alertCursor);
-      }
-      return this.alertCursor;
+    if (this.alertCursor == null) {
+      this.alertCursor = Alert.all(this);
+      startManagingCursor(this.alertCursor);
+    }
+    return this.alertCursor;
   }
 
   private CursorAdapter alertCursorAdapter() {
