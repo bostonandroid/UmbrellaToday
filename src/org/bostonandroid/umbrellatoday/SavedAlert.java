@@ -53,11 +53,12 @@ class SavedAlert {
     this.id = i;
   }
   
-  private Either<SavedAlert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
+  private Either<SavedAlert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, Runnable f) {
     SavedAlert a = new SavedAlert(this.id, new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate));
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
       db.replaceOrThrow("alerts", null, a.asContentValues());
+      f.run();
       return new Right<SavedAlert>(a);
     } catch (SQLException e) {
       a.errorCanBeNull = e;
@@ -189,7 +190,7 @@ class SavedAlert {
       return this;
     }
     
-    public Either<SavedAlert> update(Context c) {
+    public Either<SavedAlert> update(Context c, Runnable f) {
       return this.alert.update(c,
           time,
           repeatDays.contains("Sunday"),
@@ -200,7 +201,8 @@ class SavedAlert {
           repeatDays.contains("Friday"),
           repeatDays.contains("Saturday"),
           theLocation,
-          isAutolocate);
+          isAutolocate,
+          f);
     }
   }
 }

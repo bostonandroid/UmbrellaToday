@@ -63,6 +63,6 @@ public class EditAlert extends PreferenceActivity {
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText());
     /// TODO: this #save needs to be async.
-    return alertUpdater.update(getApplicationContext());
+    return alertUpdater.update(this, new AlarmSetter(this));
   }
 }
