@@ -60,7 +60,7 @@ public class Alerts extends ListActivity {
   }
 
     private void deleteAlert(long id) {
-        Alert.find(this, id).perform(new EitherRunner<SavedAlert>() {
+        Alert.find(this, id).perform(new ValueRunner<SavedAlert>() {
           public void run(SavedAlert a) {
             a.delete(Alerts.this);
           }

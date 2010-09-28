@@ -20,7 +20,7 @@ public class EditAlert extends PreferenceActivity {
     setContentView(R.layout.edit_alert);
     
     Long alert_id = (Long)getIntent().getExtras().get("alert_id");
-    Alert.find(this,alert_id).perform(new EitherRunner<SavedAlert>() {
+    Alert.find(this,alert_id).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
         final SavedAlert a = alert; // for the onClick
         ((TimePreference)findPreference("time")).setTime(alert.alertAt());
@@ -32,7 +32,7 @@ public class EditAlert extends PreferenceActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) {
             updateAlert(a).
-              onSuccess(new EitherRunner<SavedAlert>() {
+              onSuccess(new ValueRunner<SavedAlert>() {
                 public void run(SavedAlert a) {
                   Calendar nextAt = a.alertAt();
                   Toast.makeText(getApplicationContext(),
@@ -40,7 +40,7 @@ public class EditAlert extends PreferenceActivity {
                       Toast.LENGTH_LONG).show();
                   finish();
               }}).
-              onFailure(new EitherRunner<SavedAlert>() {
+              onFailure(new ValueRunner<SavedAlert>() {
                 public void run(SavedAlert a) {
                   Toast.makeText(getApplicationContext(),
                       "Alert update failed: "+a.errorString(),

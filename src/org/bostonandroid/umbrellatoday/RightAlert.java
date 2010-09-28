@@ -7,12 +7,12 @@ class RightAlert implements AlertOrError {
     this.alert = a;
   }
   
-  public AlertOrError onSuccess(EitherRunner<SavedAlert> f) {
+  public AlertOrError onSuccess(ValueRunner<SavedAlert> f) {
     f.run(this.alert);
     return this;
   }
  
-  public AlertOrError onFailure(EitherRunner<Alert> f) {
+  public AlertOrError onFailure(ValueRunner<Alert> f) {
     return this;
   }
 }

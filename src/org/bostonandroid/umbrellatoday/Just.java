@@ -7,8 +7,12 @@ class Just<T> implements Maybe<T> {
     this.value = o;
   }
   
-  public Maybe<T> perform(EitherRunner<T> f) {
+  public Maybe<T> perform(ValueRunner<T> f) {
     f.run(this.value);
+    return this;
+  }
+  
+  public Maybe<T> orElse(Runnable f) {
     return this;
   }
 }

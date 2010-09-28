@@ -24,7 +24,7 @@ public class NewAlert extends PreferenceActivity {
     nextButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         saveAlert().
-          onSuccess(new EitherRunner<SavedAlert>() {
+          onSuccess(new ValueRunner<SavedAlert>() {
             public void run(SavedAlert a) {
               Calendar nextAt = a.alertAt();
               Toast.makeText(getApplicationContext(),
@@ -32,7 +32,7 @@ public class NewAlert extends PreferenceActivity {
                   Toast.LENGTH_LONG).show();
               finish();
           }}).
-          onFailure(new EitherRunner<Alert>() {
+          onFailure(new ValueRunner<Alert>() {
             public void run(Alert a) {
               Log.d("NewAlert", "failed to add alert: " + a.errorString());
               Toast.makeText(getApplicationContext(),
@@ -56,6 +56,6 @@ public class NewAlert extends PreferenceActivity {
       repeatDays(((RepeatPreference)pm.findPreference("repeat")).getChoices()).
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
       location(((EditTextPreference)pm.findPreference("location")).getText()).
-      save(this);
+      save(this, new AlarmSetter(this));
   }
 }

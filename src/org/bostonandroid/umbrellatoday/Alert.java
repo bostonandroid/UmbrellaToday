@@ -151,11 +151,12 @@ public class Alert {
     return SavedAlert.findNextAlert(Alert.all(context));
   }
 
-  private AlertOrError save(Context c) {
+  private AlertOrError save(Context c, Runnable f) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
       long id = db.insertOrThrow("alerts", null, asContentValues());
-      SavedAlert a = new SavedAlert(id, this);
+      SavedAlert a = new SavedAlert(id, this);          
+      f.run();
       return new RightAlert(a);
     } catch (SQLException e) {
       Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate);
@@ -237,8 +238,8 @@ public class Alert {
           isAutolocate);
     }
     
-    public AlertOrError save(Context c) {
-      return build().save(c);
+    public AlertOrError save(Context c, Runnable f) {
+      return build().save(c, f);
     }
   }
 }

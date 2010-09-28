@@ -3,12 +3,12 @@ public class Right<T> implements Either<T> {
   private T value;
   Right(T theValue) { this.value = theValue; }
 
-  public Either<T> onSuccess(EitherRunner<T> f) {
+  public Either<T> onSuccess(ValueRunner<T> f) {
     f.run(this.value);
     return this;
   }
 
-  public Either<T> onFailure(EitherRunner<T> f) {
+  public Either<T> onFailure(ValueRunner<T> f) {
     return this;
   }
 }
