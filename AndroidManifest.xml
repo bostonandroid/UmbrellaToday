@@ -6,7 +6,8 @@
     android:name="UmbrellaTodayApplication">
     <activity android:name="AboutUmbrellaToday" android:label="@string/about_umbrella_today" />
 
-    <activity android:name="Alerts" android:label="@string/app_name" android:icon="@drawable/icon">
+    <activity android:name="Alerts" android:label="@string/app_name"
+      android:icon="@drawable/icon">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -22,11 +23,20 @@
       <meta-data android:name="android.appwidget.provider"
         android:resource="@xml/widget" />
     </receiver>
+    <!--  doesn't seem to work yet.
+    <receiver android:name="OnBoot">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <category android:name="android.intent.category.HOME" />
+      </intent-filter>
+    </receiver>
+    -->
 
     <service android:name=".Widget$UpdateService" />
     <service android:process=":remote" android:name="AlarmService"></service>
   </application>
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   <uses-sdk android:minSdkVersion="4" />
 </manifest> 
