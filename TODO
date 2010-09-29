@@ -1,10 +1,10 @@
-* Different background image for horizontal.
-* Different background images for rain, sun, snow.
-* Show a spinner instead of the text 'unknown'.
-* Big text for the report.
-* Better input box; enter should submit.
-* More padding.
-* Hook into the alarm for notifications.
 * About page with copyright info.
+ - BA, UT.com, tbot, background image
 * Handle UT being down.
+* Describe app when no alerts are set.
+* Move DB calls into AsyncTask
+* Vibrate on alarm
+* User-agent
+* Widget
+* Alarm set on boot
 * Get it on the app store!
