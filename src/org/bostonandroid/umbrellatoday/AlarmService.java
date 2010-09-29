@@ -48,7 +48,7 @@ public class AlarmService extends IntentService {
         R.drawable.notification_icon, appName, System
         .currentTimeMillis());
     notification.setLatestEventInfo(AlarmService.this, appName, message,
-        PendingIntent.getService(this, 1, new Intent(), 0));
+        PendingIntent.getActivity(this, 1, new Intent(this, Alerts.class), 0));
     notification.flags |= Notification.FLAG_AUTO_CANCEL;
     notificationManager.notify(1, notification);
   }
