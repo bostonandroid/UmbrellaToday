@@ -33,9 +33,9 @@ public class AlarmService extends IntentService {
                 public void run(Report report) {
                   String answer = report.getAnswer();
                   if (answer.equals("yes"))
-                    showNotification("Rain");
+                    showNotification("You may need your galoshes!", R.drawable.weather_showers);
                   else if (answer.equals("snow"))
-                    showNotification("Snow");
+                    showNotification("Bring a shovel!", R.drawable.weather_snow);
                 }});}}).
           orElse(new Runnable() {
             public void run() {
@@ -43,10 +43,10 @@ public class AlarmService extends IntentService {
             }});}});
   }
 
-  void showNotification(String message) {
+  void showNotification(String message, int icon) {
     String appName = getString(R.string.app_name);
     Notification notification = new Notification(
-        R.drawable.notification_icon, appName, System
+        R.drawable.weather_showers, appName, System
         .currentTimeMillis());
     notification.setLatestEventInfo(AlarmService.this, appName, message,
         PendingIntent.getActivity(this, 1, new Intent(this, Alerts.class), 0));
@@ -55,6 +55,6 @@ public class AlarmService extends IntentService {
   }
   
   private void showErrorNotification(String message) {
-    showNotification(message);
+    showNotification(message, R.drawable.weather_showers);
   }
 }
