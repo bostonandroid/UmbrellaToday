@@ -27,19 +27,21 @@ public class AlarmService extends IntentService {
   protected void onHandleIntent(Intent intent) {
     Alert.find(this, intent.getExtras().getLong("alarm_id")).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
-        alert.url(AlarmService.this).perform(new ValueRunner<String>() {
-          public void run(String url) {
-            new ReportRetriever(url).retrieveReport().perform(new ValueRunner<Report>() {
-              public void run(Report report) {
-                String answer = report.getAnswer();
-                if (answer.equals("yes"))
-                  showNotification("Rain");
-                else if (answer.equals("snow"))
-                  showNotification("Snow");
-              }});}}).orElse(new Runnable() {
-                public void run() {
-                  showErrorNotification("Can't look up location data.");
-                }});}});
+        alert.url(AlarmService.this).
+          perform(new ValueRunner<String>() {
+            public void run(String url) {
+              new ReportRetriever(url).retrieveReport().perform(new ValueRunner<Report>() {
+                public void run(Report report) {
+                  String answer = report.getAnswer();
+                  if (answer.equals("yes"))
+                    showNotification("Rain");
+                  else if (answer.equals("snow"))
+                    showNotification("Snow");
+                }});}}).
+          orElse(new Runnable() {
+            public void run() {
+              showErrorNotification("Can't look up location data.");
+            }});}});
   }
 
   void showNotification(String message) {
