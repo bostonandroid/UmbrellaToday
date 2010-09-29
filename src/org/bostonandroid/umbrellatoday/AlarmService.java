@@ -24,7 +24,9 @@ public class AlarmService extends IntentService {
 
   @Override
   protected void onHandleIntent(Intent intent) {
-    Alert.find(this, intent.getExtras().getLong("alarm_id")).perform(new ValueRunner<SavedAlert>() {
+    final long alarmId = intent.getExtras().getLong("alarm_id");
+ 
+    Alert.find(this, alarmId).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
         alert.url(AlarmService.this).
           perform(new ValueRunner<String>() {
@@ -33,28 +35,32 @@ public class AlarmService extends IntentService {
                 public void run(Report report) {
                   String answer = report.getAnswer();
                   if (answer.equals("yes"))
-                    showNotification("You may need your galoshes!", R.drawable.weather_showers);
+                    showNotification(R.drawable.weather_showers, "You may need your galoshes!", alarmId);
                   else if (answer.equals("snow"))
-                    showNotification("Bring a shovel!", R.drawable.weather_snow);
+                    showNotification( R.drawable.weather_snow, "Bring a shovel!", alarmId);
                 }});}}).
           orElse(new Runnable() {
             public void run() {
-              showErrorNotification("Can't look up location data.");
+              showErrorNotification("Can't look up location data.", alarmId);
             }});}});
-  }
-
-  void showNotification(String message, int icon) {
-    String appName = getString(R.string.app_name);
-    Notification notification = new Notification(
-        R.drawable.weather_showers, appName, System
-        .currentTimeMillis());
-    notification.setLatestEventInfo(AlarmService.this, appName, message,
-        PendingIntent.getActivity(this, 1, new Intent(this, Alerts.class), 0));
-    notification.flags |= Notification.FLAG_AUTO_CANCEL;
-    notificationManager.notify(1, notification);
+    
+    new AlarmSetter(this).run();
   }
   
-  private void showErrorNotification(String message) {
-    showNotification(message, R.drawable.weather_showers);
+  private Notification buildNotification(int icon, String contentText, long alertId) {
+    Notification notification = new Notification(icon, contentText, System.currentTimeMillis());
+    notification.setLatestEventInfo(this, getString(R.string.app_name), contentText,
+        PendingIntent.getActivity(this, 0, new Intent(this, EditAlert.class).putExtra("alert_id", alertId), 0));
+    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+    return notification;
+  }
+
+  void showNotification(int icon, String contentText, long alertId) {
+    notificationManager.cancel((int)alertId); // FIXME: cancel and notify take an int, alertId is long
+    notificationManager.notify((int)icon, buildNotification(icon, contentText, alertId));
+  }
+  
+  private void showErrorNotification(String contentText, long alarmId) {
+    showNotification(R.drawable.weather_showers, contentText, alarmId);
   }
 }
