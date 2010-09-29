@@ -6,7 +6,7 @@ class LocationUrlController {
   private boolean isAutolocate;
   private String location;
   private Context context;
-  private Maybe<String> url = new Nothing<String>(); // TODO: Why can this be null?
+  private Maybe<String> url;
  
   public LocationUrlController(Context c, SavedAlert a) {
     this.context = c;
@@ -18,6 +18,10 @@ class LocationUrlController {
     location().perform(new ValueRunner<String>() {
       public void run(String location) {
         setUrl(new LocationUrlRetriever().url(location)); // TODO: Fix Java.
+      }
+    }).orElse(new Runnable() {
+      public void run() {
+        setUrl(new Nothing<String>());
       }
     });
     return this.url;
