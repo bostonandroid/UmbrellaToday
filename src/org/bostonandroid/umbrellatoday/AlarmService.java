@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public class AlarmService extends IntentService {
-
   public final static String TAG = "AlarmService";
 
   private NotificationManager notificationManager;
