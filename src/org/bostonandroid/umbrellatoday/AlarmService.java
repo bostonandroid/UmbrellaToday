@@ -57,7 +57,7 @@ public class AlarmService extends IntentService {
 
   void showNotification(int icon, String contentText, long alertId) {
     notificationManager.cancel((int)alertId); // FIXME: cancel and notify take an int, alertId is long
-    notificationManager.notify((int)icon, buildNotification(icon, contentText, alertId));
+    notificationManager.notify((int)alertId, buildNotification(icon, contentText, alertId));
   }
   
   private void showErrorNotification(String contentText, long alarmId) {
