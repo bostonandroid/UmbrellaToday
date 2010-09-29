@@ -152,6 +152,10 @@ class SavedAlert {
     }
   }
   
+  public Maybe<String> url(Context c) {
+    return new LocationUrlController(c, this).url();
+  }
+  
   public SavedAlert.Updater updater() {
     return new SavedAlert.Updater(this);
   }
