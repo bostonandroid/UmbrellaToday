@@ -11,7 +11,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class LocationUrlRetriever {
-  private Maybe<String> url = new Nothing<String>(); // TODO: Why can this be null?
+  private Maybe<String> url;
  
   public Maybe<String> url(String location) {
     requestEntity(location).perform(new ValueRunner<StringEntity>() {
@@ -23,8 +23,16 @@ public class LocationUrlRetriever {
             else
               setUrl(new Nothing<String>());
           }
+        }).orElse(new Runnable() {
+          public void run() {
+            setUrl(new Nothing<String>());
+          }
         });
-      }});
+      }}).orElse(new Runnable() {
+        public void run() {
+          setUrl(new Nothing<String>());
+        }
+      });
     return this.url;
   }
   
