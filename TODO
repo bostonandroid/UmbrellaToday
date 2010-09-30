@@ -1,5 +1,3 @@
-* About page with copyright info.
- - BA, UT.com, tbot, background image
 * Handle UT being down.
 * Move DB calls into AsyncTask
 * Vibrate on alarm

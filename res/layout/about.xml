@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-  <TextView  
-      android:layout_width="fill_parent" 
-      android:layout_height="wrap_content" 
-      android:id="@+id/about"
-      android:text="@string/about_text"
-      />
+  android:orientation="vertical" android:layout_width="fill_parent"
+  android:layout_height="fill_parent" android:background="#bcd7f4">
+  <TextView android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:id="@+id/about"
+    android:text="@string/about_text" android:textSize="20sp"
+    android:layout_margin="10dip" android:textColor="#133D5B" />
 </LinearLayout>
-

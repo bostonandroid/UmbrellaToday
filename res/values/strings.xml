@@ -3,7 +3,12 @@
     <string name="app_name">Umbrella Today</string>
     <string name="about_button_text">About</string>
     <string name="about_umbrella_today">About Umbrella Today</string>
-    <string name="about_text">&amp;copy; 2010 &lt;a href=&quot;http://bostonandroid.org&quot;&gt;Boston Android&lt;/a&gt;</string>
+    <string name="about_text">
+    &lt;p&gt;The Umbrella Today Android app is copyright 2010 Boston Android.&lt;/p&gt;
+    &lt;p&gt;The project was lead by &lt;a href="&quot;http://matthoran.com/&quot;&gt;Matt Horan&lt;/a&gt; with help from
+    &lt;a href=&quot;http://mike-burns.com/&quot;&gt;Mike Burns&lt;/a&gt; and the rest of &lt;a href=&quot;http://bostonandroid.org/&quot;&gt;the Boston Android group&lt;/a&gt;.&lt;/p&gt;
+    &lt;p&gt;The original &lt;a href=&quot;http://umbrellatoday.com/&quot;&gt;Umbrella Today&lt;/a&gt; is copyright 2010 &lt;a href=&quot;http://thoughtbot.com/&quot;&gt;thoughtbot&lt;/a&gt;.&lt;/p&gt;
+    </string>
     <string name="new_location_text">New Location</string>
 	<string name="no_alerts">Never forget your umbrella again. Set notifications and we\'ll take care of the rest.</string>
     <string name="no_alerts_tagline">It\'s totally like the simplest weather report ever, Julie.</string>
