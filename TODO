@@ -1,7 +1,6 @@
 * Handle UT being down.
 * Move DB calls into AsyncTask
 * Vibrate on alarm
-* User-agent
 * Widget
 * Alarm set on boot
 * Get it on the app store!

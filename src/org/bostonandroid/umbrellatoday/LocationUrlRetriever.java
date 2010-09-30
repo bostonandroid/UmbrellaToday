@@ -73,6 +73,7 @@ public class LocationUrlRetriever {
     HttpPost postRequest = new HttpPost(url);
     postRequest.addHeader("Accept", "text/xml");
     postRequest.addHeader("Content-Type", "text/xml");
+    postRequest.addHeader("User-Agent", "Android Umbrella Today/1.0");
     postRequest.setEntity(requestEntity);
     return postRequest;
   }
