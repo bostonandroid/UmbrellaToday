@@ -5,7 +5,8 @@
     <string name="about_umbrella_today">About Umbrella Today</string>
     <string name="about_text">&amp;copy; 2010 &lt;a href=&quot;http://bostonandroid.org&quot;&gt;Boston Android&lt;/a&gt;</string>
     <string name="new_location_text">New Location</string>
-	<string name="no_alerts">No alerts set.</string>
+	<string name="no_alerts">Never forget your umbrella again. Set notifications and we\'ll take care of the rest.</string>
+    <string name="no_alerts_tagline">It\'s totally like the simplest weather report ever, Julie.</string>
 	<string name="time">Alert Time</string>
 	<string name="repeat">Day Repetition</string>
 	<string name="location_title">Location</string>

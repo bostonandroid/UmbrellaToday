@@ -31,9 +31,42 @@
     <ListView android:id="@id/android:list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" />
-    
-    <TextView android:id="@id/android:empty"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:text="@string/no_alerts" />
+
+  <RelativeLayout android:id="@id/android:empty"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:background="#bcd7f4">
+      <ImageView android:id="@+id/umbrella_icon"
+        android:gravity="center" android:src="@drawable/umbrella"
+        android:scaleType="center" android:layout_height="68dip"
+        android:layout_width="68dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginLeft="10dip"
+         />
+      <TextView android:id="@+id/no_alerts_text"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/no_alerts" android:textColor="#133D5B"
+        android:textSize="20sp"
+        android:layout_toRightOf="@id/umbrella_icon"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="10dip"
+         />
+         
+      <ImageView android:id="@+id/sun_icon"
+        android:src="@drawable/sun"
+        android:scaleType="center" android:layout_height="wrap_content"
+        android:layout_width="68dip"
+        android:layout_below="@id/no_alerts_text"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="10dip"
+         />
+      <TextView android:id="@+id/tagline_text"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/no_alerts_tagline" android:textColor="#133D5B"
+        android:textSize="20sp"
+        android:layout_toLeftOf="@id/sun_icon"
+        android:layout_alignTop="@id/sun_icon"
+        android:layout_marginLeft="10dip"
+        />
+</RelativeLayout>
 </LinearLayout>

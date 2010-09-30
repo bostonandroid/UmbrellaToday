@@ -1,7 +1,6 @@
 * About page with copyright info.
  - BA, UT.com, tbot, background image
 * Handle UT being down.
-* Describe app when no alerts are set.
 * Move DB calls into AsyncTask
 * Vibrate on alarm
 * User-agent
