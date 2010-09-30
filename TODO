@@ -2,8 +2,8 @@
 * Move DB calls into AsyncTask
 * Vibrate on alarm
 * Widget
-* Alarm set on boot
 * Get it on the app store!
 * Use a ViewSwitcher to make the home screen better:
  - empty list is description with "Add first alert" button.
  - non-empty list is alarms with "Add alert" button atop.
+* show location in notification alert

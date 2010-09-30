@@ -23,14 +23,12 @@
       <meta-data android:name="android.appwidget.provider"
         android:resource="@xml/widget" />
     </receiver>
-    <!--  doesn't seem to work yet.
     <receiver android:name="OnBoot">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
         <category android:name="android.intent.category.HOME" />
       </intent-filter>
     </receiver>
-    -->
 
     <service android:name=".Widget$UpdateService" />
     <service android:process=":remote" android:name="AlarmService"></service>
