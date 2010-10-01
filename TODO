@@ -7,3 +7,4 @@
  - empty list is description with "Add first alert" button.
  - non-empty list is alarms with "Add alert" button atop.
 * show location in notification alert
+* Mention the license in the About
