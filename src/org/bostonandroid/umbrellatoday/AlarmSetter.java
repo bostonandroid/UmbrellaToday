@@ -33,7 +33,7 @@ class AlarmSetter implements Runnable {
   }
 
   private PendingIntent makePendingIntent(Intent i) {
-    return PendingIntent.getService(context(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
+    return PendingIntent.getBroadcast(context(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
   }
   
   private Intent makeIntent(SavedAlert a) {
@@ -41,6 +41,6 @@ class AlarmSetter implements Runnable {
   }
   
   private Intent makeIntent() {
-    return new Intent(context(), AlarmService.class);
+    return new Intent(context(), AlarmReceiver.class);
   }
 }

@@ -1,13 +1,14 @@
 package org.bostonandroid.umbrellatoday;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-public class AlarmService extends IntentService {
+import com.commonsware.cwac.wakeful.WakefulIntentService;
+
+public class AlarmService extends WakefulIntentService {
   public final static String TAG = "AlarmService";
 
   private NotificationManager notificationManager;
@@ -23,7 +24,7 @@ public class AlarmService extends IntentService {
   }
 
   @Override
-  protected void onHandleIntent(Intent intent) {
+  protected void doWakefulWork(Intent intent) {
     final long alarmId = intent.getExtras().getLong("alarm_id");
  
     Alert.find(this, alarmId).perform(new ValueRunner<SavedAlert>() {
