@@ -21,7 +21,7 @@ public class EditAlert extends PreferenceActivity {
     addPreferencesFromResource(R.xml.new_alert);
     setContentView(R.layout.edit_alert);
     
-    Long alert_id = (Long)getIntent().getExtras().get("alert_id");
+    long alert_id = getIntent().getExtras().getLong("alert_id");
     Alert.find(this,alert_id).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
         final SavedAlert a = alert; // for the onClick
