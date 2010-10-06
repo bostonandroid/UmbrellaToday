@@ -3,6 +3,8 @@ package org.bostonandroid.umbrellatoday;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.bostonandroid.timepreference.TimePreference;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -23,7 +25,8 @@ public class EditAlert extends PreferenceActivity {
     Alert.find(this,alert_id).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
         final SavedAlert a = alert; // for the onClick
-        ((TimePreference)findPreference("time")).setTime(alert.alertAt());
+        ((TimePreference)findPreference("time")).setTime(TimePreference.formatter().format(alert.alertAt().getTime()));
+        ((TimePreference)findPreference("time")).setSummary(TimePreference.summaryFormatter(EditAlert.this).format(alert.alertAt().getTime()));
         ((RepeatPreference)findPreference("repeat")).setChoices(alert.repeatDays());
         ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
         ((EditTextPreference)findPreference("location")).setText(alert.location());

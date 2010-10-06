@@ -3,6 +3,8 @@ package org.bostonandroid.umbrellatoday;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.bostonandroid.timepreference.TimePreference;
+
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
