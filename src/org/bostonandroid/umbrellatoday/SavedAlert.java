@@ -38,7 +38,8 @@ class SavedAlert {
           c.getInt(7) == 1,
           c.getInt(8) == 1,
           c.getString(9),
-          c.getInt(10) == 1)));
+          c.getInt(10) == 1,
+          c.getInt(11) == 1)));
       c.close();
     } else {
       Log.i("Alert", "find: c.count=0");
@@ -53,8 +54,8 @@ class SavedAlert {
     this.id = i;
   }
   
-  private Either<SavedAlert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, Runnable f) {
-    SavedAlert a = new SavedAlert(this.id, new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate));
+  private Either<SavedAlert> update(Context c, Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, boolean enabled, Runnable f) {
+    SavedAlert a = new SavedAlert(this.id, new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate, enabled));
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
     try {
       db.replaceOrThrow("alerts", null, a.asContentValues());
@@ -100,7 +101,8 @@ class SavedAlert {
               cursor.getInt(7) == 1,
               cursor.getInt(8) == 1,
               cursor.getString(9),
-              cursor.getInt(10) == 1));
+              cursor.getInt(10) == 1,
+              cursor.getInt(11) == 1));
       Long alertTime = alert.alertAt().getTimeInMillis();
       if (alertTime < minTime)
         return findNextAlert(cursor, alertTime, new Just<SavedAlert>(alert));
@@ -166,6 +168,7 @@ class SavedAlert {
     private String theLocation;
     private boolean isAutolocate;
     private SavedAlert alert;
+    private boolean enabled;
 
     public Updater(SavedAlert a) {
       this.alert = a;
@@ -173,6 +176,7 @@ class SavedAlert {
       this.repeatDays = new ArrayList<String>();
       this.theLocation = "";
       this.isAutolocate = false;
+      this.enabled = false;
     }
     
     public Updater alertAt(Calendar time) {
@@ -194,6 +198,11 @@ class SavedAlert {
       isAutolocate = autogps;
       return this;
     }
+
+    public Updater enable() {
+      this.enabled = true;
+      return this;
+    }
     
     public Either<SavedAlert> update(Context c, Runnable f) {
       return this.alert.update(c,
@@ -207,6 +216,7 @@ class SavedAlert {
           repeatDays.contains("Saturday"),
           theLocation,
           isAutolocate,
+          enabled,
           f);
     }
   }

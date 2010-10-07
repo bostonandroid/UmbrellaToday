@@ -24,6 +24,7 @@ public class Alert {
   private boolean saturday;
   private String location;
   private boolean autolocate;
+  private boolean enabled;
   
   private static final String[] WEEKDAYS = {
     "Sunday",
@@ -44,7 +45,7 @@ public class Alert {
     return SavedAlert.find(context, id);
   }
   
-  protected Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate) {
+  protected Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, boolean enabled) {
     this.alertAt = alertAt;
     this.sunday = sunday;
     this.monday = monday;
@@ -55,6 +56,7 @@ public class Alert {
     this.saturday = saturday;
     this.location = location;
     this.autolocate = autolocate;
+    this.enabled = enabled;
   }
   
   public boolean isRepeating() {
@@ -136,6 +138,10 @@ public class Alert {
     return this.location;
   }
 
+  public boolean enabled() {
+    return this.enabled;
+  }
+
   public static Maybe<SavedAlert> findNextAlert(Context context) {
     return SavedAlert.findNextAlert(Alert.all(context));
   }
@@ -148,7 +154,7 @@ public class Alert {
       f.run();
       return new RightAlert(a);
     } catch (SQLException e) {
-      Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate);
+      Alert a = new Alert(alertAt, sunday, monday, tuesday, wednesday, thursday, friday, saturday, location, autolocate, enabled);
       a.errorCanBeNull = e;
       return new LeftAlert(a);
     }
@@ -174,6 +180,7 @@ public class Alert {
     cv.put("saturday", this.saturday);
     cv.put("location", this.location);
     cv.put("autolocate", this.autolocate);
+    cv.put("enabled", this.enabled);
     return cv;
   }
   
@@ -186,12 +193,14 @@ public class Alert {
     private List<String> repeatDays;
     private String theLocation;
     private boolean isAutolocate;
+    private boolean enabled;
 
     public Builder() {
       this.time = new GregorianCalendar(1970,01,01);
       this.repeatDays = new ArrayList<String>();
       this.theLocation = "";
       this.isAutolocate = false;
+      this.enabled = false;
     }
     
     public Builder alertAt(Calendar time) {
@@ -213,6 +222,11 @@ public class Alert {
       isAutolocate = autogps;
       return this;
     }
+
+    public Builder enable() {
+      this.enabled = true;
+      return this;
+    }
     
     public Alert build() {
       return new Alert(time,
@@ -224,7 +238,8 @@ public class Alert {
           repeatDays.contains("Friday"),
           repeatDays.contains("Saturday"),
           theLocation,
-          isAutolocate);
+          isAutolocate,
+          enabled);
     }
     
     public AlertOrError save(Context c, Runnable f) {
