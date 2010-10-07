@@ -1,3 +1,4 @@
+* 12/24 hour time preference.
 * Handle UT being down.
 * Move DB calls into AsyncTask
 * Vibrate on alarm

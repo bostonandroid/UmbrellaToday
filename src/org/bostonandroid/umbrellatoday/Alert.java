@@ -25,7 +25,8 @@ public class Alert {
   private String location;
   private boolean autolocate;
   
-  private static final String[] WEEKDAYS = { "Sunday",
+  private static final String[] WEEKDAYS = {
+    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
@@ -61,35 +62,32 @@ public class Alert {
   }
   
   public Calendar alertAt() {
-    return alertAtAux(alertAtAbsolute(now()));
+    Calendar now = new GregorianCalendar();
+    return alertAtAux(alertAtAbsolute(now), now);
   }
 
   private Calendar alertAtAbsolute(Calendar now) {
-    int year = now.get(Calendar.YEAR);
-    int month = now.get(Calendar.MONTH);
-    int day = now.get(Calendar.DAY_OF_MONTH);
-    int hour = this.alertAt.get(Calendar.HOUR_OF_DAY);
-    int minute = this.alertAt.get(Calendar.MINUTE);
-    return new GregorianCalendar(year, month, day, hour, minute);
+    Calendar alertAt = (Calendar) now.clone();
+    alertAt.set(Calendar.HOUR_OF_DAY, this.alertAt.get(Calendar.HOUR_OF_DAY));
+    alertAt.set(Calendar.MINUTE, this.alertAt.get(Calendar.MINUTE));
+    alertAt.clear(Calendar.SECOND);
+    alertAt.clear(Calendar.MILLISECOND);
+    return alertAt;
   }
 
-  public Calendar alertAtAux(Calendar calendar) {
+  public Calendar alertAtAux(Calendar alertAt, Calendar now) {
     if (isRepeating())
-      if (repeatsFor(now()))
-        if (calendar.after(now()))
-          return calendar;
+      if (repeatsFor(now))
+        if (alertAt.after(now))
+          return alertAt;
         else
-          return alertAtRepeating(calendar);
+          return alertAtRepeating(alertAt);
       else
-        return alertAtRepeating(calendar);
-    else if (calendar.after(now()))
-      return calendar;
+        return alertAtRepeating(alertAt);
+    else if (alertAt.after(now))
+      return alertAt;
     else
-      return nextDay(calendar);
-  }
-
-  private Calendar now() {
-    return new GregorianCalendar();
+      return nextDay(alertAt);
   }
 
   private boolean repeatsFor(Calendar c) {
@@ -108,33 +106,24 @@ public class Alert {
   }
   
   private Calendar nextDay(Calendar c) {
-    Calendar nextC = new GregorianCalendar();
-    nextC.setTime(c.getTime());
+    Calendar nextC = (Calendar) c.clone();
     nextC.add(Calendar.DAY_OF_WEEK, 1);
     return nextC;
   }
 
   public List<String> repeatDays() {
-    String[] dayStrings = {
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday" };
-    boolean[] dayChoices = {
+    boolean[] selections = {
+        this.sunday,
         this.monday,
         this.tuesday,
         this.wednesday,
         this.thursday,
         this.friday,
-        this.saturday,
-        this.sunday };
+        this.saturday };
     List<String> days = new ArrayList<String>();
     for (int i = 0; i < 7; i++) {
-      if (dayChoices[i])
-        days.add(dayStrings[i]);
+      if (selections[i])
+        days.add(WEEKDAYS[i]);
     }
     return days;
   }

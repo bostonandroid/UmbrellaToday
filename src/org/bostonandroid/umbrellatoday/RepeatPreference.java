@@ -13,12 +13,13 @@ import android.util.SparseBooleanArray;
 import android.widget.ListView;
 
 public class RepeatPreference extends ListPreference {
-
-    private List<String> currentChoices = new ArrayList<String>();
-    private List<String> newChoices = new ArrayList<String>();
+    private List<String> currentChoices;
+    private List<String> newChoices;
 
     public RepeatPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.currentChoices = new ArrayList<String>();
+        this.newChoices = new ArrayList<String>();
     }
 
     @Override
@@ -33,13 +34,13 @@ public class RepeatPreference extends ListPreference {
     public void onClick(DialogInterface dialogInterface, int which) {
         super.onClick(dialogInterface, which);
 
-        CharSequence[] entries = getEntries();
+        CharSequence[] entryValues = getEntryValues();
         AlertDialog alertDialog = (AlertDialog) getDialog();
         ListView listView = alertDialog.getListView();
         SparseBooleanArray a = listView.getCheckedItemPositions();
 
-        for (int i = 0; i < entries.length; i++) {
-            String entry = entries[i].toString();
+        for (int i = 0; i < entryValues.length; i++) {
+            String entry = entryValues[i].toString();
             if (a.get(i)) {
                 this.newChoices.add(entry);
             }
@@ -47,10 +48,10 @@ public class RepeatPreference extends ListPreference {
     }
 
     public boolean[] getChoicesBoolean() {
-        CharSequence[] entries = getEntries();
-        boolean[] choices = new boolean[entries.length];
-        for (int i = 0; i < entries.length; i++) {
-            String key = entries[i].toString();
+        CharSequence[] entryValues = getEntryValues();
+        boolean[] choices = new boolean[entryValues.length];
+        for (int i = 0; i < entryValues.length; i++) {
+            String key = entryValues[i].toString();
             choices[i] = currentChoices.contains(key);
         }
         return choices;
@@ -58,11 +59,9 @@ public class RepeatPreference extends ListPreference {
 
     @Override
     protected void onPrepareDialogBuilder(Builder builder) {
-        final CharSequence[] entries = getEntries();
-        // FIXME: use entryValues instead
-        //CharSequence[] entryValues = getEntryValues();
+        final CharSequence[] entryValues = getEntryValues();
 
-        builder.setMultiChoiceItems(entries, getChoicesBoolean(),
+        builder.setMultiChoiceItems(entryValues, getChoicesBoolean(),
                 new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which,
                             boolean isChecked) {
