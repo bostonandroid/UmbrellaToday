@@ -1,5 +1,7 @@
-* 12/24 hour time preference.
-* Enable/disable alerts.
+* Tidy up Alerts activity:
+ - 12/24 hour time per user preference
+ - enabled/disabled.
+* Show location in notification alert.
 * Handle UT being down.
 * Move DB calls into AsyncTask
 * Vibrate on alarm
@@ -8,5 +10,4 @@
 * Use a ViewSwitcher to make the home screen better:
  - empty list is description with "Add first alert" button.
  - non-empty list is alarms with "Add alert" button atop.
-* show location in notification alert
 * Mention the license in the About
