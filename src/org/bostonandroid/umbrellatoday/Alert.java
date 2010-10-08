@@ -40,6 +40,12 @@ public class Alert {
     Cursor x = db.query("alerts", null, null, null, null, null, null);
     return x;
   }
+
+  public static Cursor enabled(Context c) {
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getReadableDatabase();
+    Cursor x = db.query("alerts", null, "enabled", null, null, null, null);
+    return x;
+  }
   
   public static Maybe<SavedAlert> find(Context context, long id) {
     return SavedAlert.find(context, id);
@@ -77,7 +83,7 @@ public class Alert {
     return alertAt;
   }
 
-  public Calendar alertAtAux(Calendar alertAt, Calendar now) {
+  private Calendar alertAtAux(Calendar alertAt, Calendar now) {
     if (isRepeating())
       if (repeatsFor(now))
         if (alertAt.after(now))
@@ -138,12 +144,12 @@ public class Alert {
     return this.location;
   }
 
-  public boolean enabled() {
+  public boolean isEnabled() {
     return this.enabled;
   }
 
   public static Maybe<SavedAlert> findNextAlert(Context context) {
-    return SavedAlert.findNextAlert(Alert.all(context));
+    return SavedAlert.findNextAlert(Alert.enabled(context));
   }
 
   private AlertOrError save(Context c, Runnable f) {
@@ -184,7 +190,7 @@ public class Alert {
     return cv;
   }
   
-  static SimpleDateFormat formatter() {
+  public static SimpleDateFormat formatter() {
     return new SimpleDateFormat("kk:mm");
   }
 
@@ -209,22 +215,22 @@ public class Alert {
     }
     
     public Builder repeatDays(List<String> days) {
-      repeatDays = days;
+      this.repeatDays = days;
       return this;
     }
     
     public Builder location(String loc) {
-      theLocation = loc;
+      this.theLocation = loc;
       return this;
     }
     
     public Builder autolocate(boolean autogps) {
-      isAutolocate = autogps;
+      this.isAutolocate = autogps;
       return this;
     }
 
-    public Builder enable() {
-      this.enabled = true;
+    public Builder enable(boolean enabled) {
+      this.enabled = enabled;
       return this;
     }
     

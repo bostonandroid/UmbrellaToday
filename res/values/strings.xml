@@ -10,18 +10,19 @@
     &lt;p&gt;The original &lt;a href=&quot;http://umbrellatoday.com/&quot;&gt;Umbrella Today&lt;/a&gt; is copyright 2010 &lt;a href=&quot;http://thoughtbot.com/&quot;&gt;thoughtbot&lt;/a&gt;.&lt;/p&gt;
     </string>
     <string name="new_location_text">New Location</string>
-	<string name="no_alerts">Never forget your umbrella again. Set notifications and we\'ll take care of the rest.</string>
+    <string name="no_alerts">Never forget your umbrella again. Set notifications and we\'ll take care of the rest.</string>
     <string name="no_alerts_tagline">It\'s totally like the simplest weather report ever, Julie.</string>
-	<string name="time">Alert Time</string>
-	<string name="repeat">Day Repetition</string>
-	<string name="location_title">Location</string>
-	<string name="detect_location">Use my location</string>
-	<string name="location">City</string>
-	<string name="new_alert">New Alert</string>
-	<string name="save_alert">Add Alert</string>
-	<string name="update_alert">Update Alert</string>
-	<string name="widget_name">Umbrella Today Widget</string>
-	<string name="widget_loading">Loading!?!</string>
-<string name="delete_alert">Delete Alert</string>
-<string name="edit_alert">Edit Alert</string>
+    <string name="time">Alert Time</string>
+    <string name="repeat">Day Repetition</string>
+    <string name="location_title">Location</string>
+    <string name="detect_location">Use my location</string>
+    <string name="location">City</string>
+    <string name="new_alert">New Alert</string>
+    <string name="save_alert">Add Alert</string>
+    <string name="update_alert">Update Alert</string>
+    <string name="widget_name">Umbrella Today Widget</string>
+    <string name="widget_loading">Loading!?!</string>
+    <string name="delete_alert">Delete Alert</string>
+    <string name="edit_alert">Edit Alert</string>
+    <string name="enable_alert">Enable Alert</string>
 </resources>

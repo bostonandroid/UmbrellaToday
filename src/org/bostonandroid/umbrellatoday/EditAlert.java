@@ -25,6 +25,7 @@ public class EditAlert extends PreferenceActivity {
     Alert.find(this,alert_id).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert alert) {
         final SavedAlert a = alert; // for the onClick
+        ((CheckBoxPreference)findPreference("enable_alert")).setChecked(alert.isEnabled());
         ((TimePreference)findPreference("time")).setTime(TimePreference.formatter().format(alert.alertAt().getTime()));
         ((TimePreference)findPreference("time")).setSummary(TimePreference.summaryFormatter(EditAlert.this).format(alert.alertAt().getTime()));
         ((RepeatPreference)findPreference("repeat")).setChoices(alert.repeatDays());
@@ -38,9 +39,8 @@ public class EditAlert extends PreferenceActivity {
               onSuccess(new ValueRunner<SavedAlert>() {
                 public void run(SavedAlert a) {
                   Calendar nextAt = a.alertAt();
-                  Toast.makeText(getApplicationContext(),
-                      "Alarm set for " + formatter().format(nextAt.getTime()),
-                      Toast.LENGTH_LONG).show();
+                  if (a.isEnabled())
+                    Toast.makeText(EditAlert.this, "Alarm set for " + formatter().format(nextAt.getTime()), Toast.LENGTH_LONG).show();
                   finish();
               }}).
               onFailure(new ValueRunner<SavedAlert>() {
@@ -64,7 +64,8 @@ public class EditAlert extends PreferenceActivity {
       alertAt(((TimePreference)pm.findPreference("time")).getTime()).
       repeatDays(((RepeatPreference)pm.findPreference("repeat")).getChoices()).
       autolocate(((CheckBoxPreference)pm.findPreference("detect_location")).isChecked()).
-      location(((EditTextPreference)pm.findPreference("location")).getText());
+      location(((EditTextPreference)pm.findPreference("location")).getText()).
+      enable(((CheckBoxPreference)pm.findPreference("enable_alert")).isChecked());
     /// TODO: this #save needs to be async.
     return alertUpdater.update(this, new AlarmSetter(this));
   }

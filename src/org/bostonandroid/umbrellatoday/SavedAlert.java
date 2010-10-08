@@ -134,6 +134,27 @@ class SavedAlert {
     return this.alert.alertAt();
   }
 
+  public boolean isEnabled() {
+    return this.alert.isEnabled();
+  }
+
+  public boolean isRepeating() {
+    return this.alert.isRepeating();
+  }
+
+  public boolean disable(Context c) {
+    SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getWritableDatabase();
+    ContentValues cv = new ContentValues();
+    cv.put("enabled", false);
+    try {
+      db.update("alerts", cv, "_id=?", new String[] { this.id + "" });
+      return true;
+    }  catch (SQLException e) {
+      this.errorCanBeNull = e;
+      return false;
+    }
+  }
+
   public boolean delete(Context c, Runnable f) {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(c).getWritableDatabase();
     try {
@@ -185,22 +206,22 @@ class SavedAlert {
     }
     
     public Updater repeatDays(List<String> days) {
-      repeatDays = days;
+      this.repeatDays = days;
       return this;
     }
     
     public Updater location(String loc) {
-      theLocation = loc;
+      this.theLocation = loc;
       return this;
     }
     
     public Updater autolocate(boolean autogps) {
-      isAutolocate = autogps;
+      this.isAutolocate = autogps;
       return this;
     }
 
-    public Updater enable() {
-      this.enabled = true;
+    public Updater enable(boolean enabled) {
+      this.enabled = enabled;
       return this;
     }
     

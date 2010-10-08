@@ -43,7 +43,11 @@ public class AlarmService extends WakefulIntentService {
           orElse(new Runnable() {
             public void run() {
               showErrorNotification("Can't look up location data.", alarmId);
-            }});}});
+            }});
+
+        if (!alert.isRepeating())
+          alert.disable(AlarmService.this);
+      }});
     
     new AlarmSetter(this).run();
   }
