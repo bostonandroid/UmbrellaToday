@@ -1,20 +1,24 @@
 package org.bostonandroid.umbrellatoday;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.CheckedTextView;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class Alerts extends ListActivity {
@@ -85,11 +89,7 @@ public class Alerts extends ListActivity {
 
   private CursorAdapter alertCursorAdapter() {
     if (this.alertCursorAdapter == null)
-      this.alertCursorAdapter = new SimpleCursorAdapter(
-          this,
-          android.R.layout.simple_list_item_1, alertCursor(),
-          new String[] { "alert_at" }, 
-          new int[] { android.R.id.text1 });
+      this.alertCursorAdapter = new AlertCursorAdapter(this, alertCursor());
     return this.alertCursorAdapter;
   }
 
@@ -118,6 +118,31 @@ public class Alerts extends ListActivity {
       return true;
     default:
       return super.onOptionsItemSelected(item);
+    }
+  }
+
+  private class AlertCursorAdapter extends CursorAdapter {
+    public AlertCursorAdapter(Context context, Cursor c) {
+      super(context, c);
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+      LayoutInflater inflater = LayoutInflater.from(context);
+      View ret = inflater.inflate(android.R.layout.simple_list_item_checked, parent, false);
+      return ret;
+    }
+
+    @Override
+    public void bindView(final View view, final Context context, Cursor cursor) {
+      Alert.find(context, cursor.getLong(0)).perform(
+          new ValueRunner<SavedAlert>() {
+            public void run(SavedAlert alert) {
+              CheckedTextView tv = (CheckedTextView) view.findViewById(android.R.id.text1);
+              tv.setText(DateFormat.getTimeFormat(context).format(alert.alertAt().getTime()));
+              tv.setChecked(alert.isEnabled());
+            }
+          });
     }
   }
 }
