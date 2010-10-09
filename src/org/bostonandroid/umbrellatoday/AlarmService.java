@@ -38,7 +38,7 @@ public class AlarmService extends WakefulIntentService {
                   if (answer.equals("yes"))
                     showNotification(R.drawable.weather_showers, "You may need your galoshes!", alarmId);
                   else if (answer.equals("snow"))
-                    showNotification( R.drawable.weather_snow, "Bring a shovel!", alarmId);
+                    showNotification(R.drawable.weather_snow, "Bring a shovel!", alarmId);
                 }});}}).
           orElse(new Runnable() {
             public void run() {

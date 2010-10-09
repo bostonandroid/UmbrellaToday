@@ -1,6 +1,5 @@
 package org.bostonandroid.umbrellatoday;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.bostonandroid.timepreference.TimePreference;
@@ -10,6 +9,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +30,7 @@ public class NewAlert extends PreferenceActivity {
             public void run(SavedAlert a) {
               Calendar nextAt = a.alertAt();
               if (a.isEnabled())
-                Toast.makeText(NewAlert.this, "Alarm set for " + formatter().format(nextAt.getTime()), Toast.LENGTH_LONG).show();
+                Toast.makeText(NewAlert.this, "Alert set for " + DateFormat.getDateFormat(NewAlert.this).format(nextAt.getTime()) + " at " + DateFormat.getTimeFormat(NewAlert.this).format(nextAt.getTime()), Toast.LENGTH_LONG).show();
               finish();
           }}).
           onFailure(new ValueRunner<Alert>() {
@@ -40,10 +40,6 @@ public class NewAlert extends PreferenceActivity {
           }});
       }
     });
-  }
-
-  private static SimpleDateFormat formatter() {
-      return new SimpleDateFormat("EEEE, MMMM d 'at' HH:mm");
   }
 
   private AlertOrError saveAlert() {

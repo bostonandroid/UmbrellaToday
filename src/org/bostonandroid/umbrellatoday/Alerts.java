@@ -133,6 +133,7 @@ public class Alerts extends ListActivity {
       return ret;
     }
 
+    // FIXME: orElse remove row from layout?
     @Override
     public void bindView(final View view, final Context context, Cursor cursor) {
       Alert.find(context, cursor.getLong(0)).perform(
@@ -140,6 +141,7 @@ public class Alerts extends ListActivity {
             public void run(SavedAlert alert) {
               CheckedTextView tv = (CheckedTextView) view.findViewById(android.R.id.text1);
               tv.setText(DateFormat.getTimeFormat(context).format(alert.alertAt().getTime()));
+              // FIXME: doesn't get unchecked when the alert fires off
               tv.setChecked(alert.isEnabled());
             }
           });
