@@ -50,8 +50,12 @@ public class Alert {
   public static Maybe<SavedAlert> find(Context context, long id) {
     return SavedAlert.find(context, id);
   }
-  
-  protected Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, boolean enabled) {
+
+  public static Maybe<SavedAlert> find(Cursor c) {
+    return SavedAlert.find(c);
+  }
+
+  Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, boolean enabled) {
     this.alertAt = alertAt;
     this.sunday = sunday;
     this.monday = monday;

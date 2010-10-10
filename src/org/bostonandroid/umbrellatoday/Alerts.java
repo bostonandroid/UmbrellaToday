@@ -136,7 +136,7 @@ public class Alerts extends ListActivity {
     // FIXME: orElse remove row from layout?
     @Override
     public void bindView(final View view, final Context context, Cursor cursor) {
-      Alert.find(context, cursor.getLong(0)).perform(
+      Alert.find(cursor).perform(
           new ValueRunner<SavedAlert>() {
             public void run(SavedAlert alert) {
               CheckedTextView tv = (CheckedTextView) view.findViewById(android.R.id.text1);

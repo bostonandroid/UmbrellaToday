@@ -24,28 +24,32 @@ class SavedAlert {
     SQLiteDatabase db = UmbrellaTodayApplication.getAlertsDatabase(context).getReadableDatabase();
     Cursor c = db.rawQuery("SELECT * FROM alerts WHERE _id = ?", new String[] {id+""});
     Maybe<SavedAlert> ma;
-    if (c.getCount() > 0) {
-      c.moveToFirst();
-      Log.i("Alert", "find: c="+c);
-      ma = new Just<SavedAlert>(new SavedAlert(c.getLong(0),
-          new Alert(
-          stringToCalendar(c.getString(1)),
-          c.getInt(2) == 1,
-          c.getInt(3) == 1,
-          c.getInt(4) == 1,
-          c.getInt(5) == 1,
-          c.getInt(6) == 1,
-          c.getInt(7) == 1,
-          c.getInt(8) == 1,
-          c.getString(9),
-          c.getInt(10) == 1,
-          c.getInt(11) == 1)));
-      c.close();
-    } else {
+    if (c.moveToFirst())
+      ma = find(c);
+    else {
       Log.i("Alert", "find: c.count=0");
       ma =  new Nothing<SavedAlert>();
     }
     c.close();
+    return ma;
+  }
+
+  public static Maybe<SavedAlert> find(Cursor c) {
+    Maybe<SavedAlert> ma;
+    Log.i("Alert", "find: c="+c);
+    ma = new Just<SavedAlert>(new SavedAlert(c.getLong(0),
+        new Alert(
+        stringToCalendar(c.getString(1)),
+        c.getInt(2) == 1,
+        c.getInt(3) == 1,
+        c.getInt(4) == 1,
+        c.getInt(5) == 1,
+        c.getInt(6) == 1,
+        c.getInt(7) == 1,
+        c.getInt(8) == 1,
+        c.getString(9),
+        c.getInt(10) == 1,
+        c.getInt(11) == 1)));
     return ma;
   }
   
