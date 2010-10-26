@@ -8,4 +8,3 @@
 * Use a ViewSwitcher to make the home screen better:
  - empty list is description with "Add first alert" button.
  - non-empty list is alarms with "Add alert" button atop.
-* Mention the license in the About
