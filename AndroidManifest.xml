@@ -16,14 +16,6 @@
     <activity android:name="NewAlert" android:label="@string/new_alert" />
     <activity android:name="EditAlert" android:label="@string/edit_alert" />
 
-    <!--
-      <receiver android:name=".Widget"
-      android:label="@string/widget_name"> <intent-filter> <action
-      android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-      </intent-filter> <meta-data
-      android:name="android.appwidget.provider"
-      android:resource="@xml/widget" /> </receiver>
-    -->
     <receiver android:name="OnBoot">
       <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -32,7 +24,6 @@
     </receiver>
     <receiver android:name="AlarmReceiver" />
 
-    <service android:name=".Widget$UpdateService" />
     <service android:name="AlarmService" />
 
   </application>
