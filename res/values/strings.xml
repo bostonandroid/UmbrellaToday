@@ -8,6 +8,7 @@
     &lt;p&gt;The project was lead by &lt;a href="&quot;http://matthoran.com/&quot;&gt;Matt Horan&lt;/a&gt; with help from
     &lt;a href=&quot;http://mike-burns.com/&quot;&gt;Mike Burns&lt;/a&gt; and the rest of &lt;a href=&quot;http://bostonandroid.org/&quot;&gt;the Boston Android developers group&lt;/a&gt;.&lt;/p&gt;
     &lt;p&gt;The original &lt;a href=&quot;http://umbrellatoday.com/&quot;&gt;Umbrella Today&lt;/a&gt; is copyright 2010 &lt;a href=&quot;http://thoughtbot.com/&quot;&gt;thoughtbot&lt;/a&gt;.&lt;/p&gt;
+    &lt;p&gt;Icons by the Tango Desktop Project and by Androidicons.&lt;p&gt;
     &lt;p&gt;Source code licensed under the BSD 3-clause license, available on &lt;a href=&quot;http://github.com/bostonandroid/UmbrellaToday&quot;&gt;Github&lt;/a&gt;.&lt;p&gt;
     </string>
     <string name="new_location_text">New Location</string>
