@@ -40,6 +40,9 @@ public class NewAlert extends PreferenceActivity {
           }});
       }
     });
+
+    // Start the user off by making them pick a time
+    getPreferenceScreen().onItemClick(null, null, 1, 0);
   }
 
   private AlertOrError saveAlert() {
