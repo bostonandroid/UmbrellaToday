@@ -28,11 +28,8 @@ public class Alerts extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    if (Alert.isEmpty(this)) {
-      startActivity(new Intent(Alerts.this, Welcome.class));
-      finish();
-    } else {
+    prettyBlank(new Runnable() {
+      public void run() {
       setContentView(R.layout.alerts);
 
       setListAdapter(alertCursorAdapter());
@@ -44,7 +41,15 @@ public class Alerts extends ListActivity {
         }
       });
       registerForContextMenu(getListView());
-    }
+    }});
+  }
+
+  private void prettyBlank(Runnable f) {
+    if (Alert.isEmpty(this)) {
+      startActivity(new Intent(Alerts.this, Welcome.class));
+      finish();
+    } else
+      f.run();
   }
 
   @Override
@@ -76,7 +81,11 @@ public class Alerts extends ListActivity {
       }
     });
     // FIXME: why doesn't this run automatically?
-    alertCursor().requery();
+    prettyBlank(new Runnable() {
+      public void run() {
+        alertCursor().requery();
+      }
+    });
   }
 
   private void editAlert(long id) {
