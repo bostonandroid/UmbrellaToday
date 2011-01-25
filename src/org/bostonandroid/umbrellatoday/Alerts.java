@@ -29,16 +29,22 @@ public class Alerts extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.alerts);
-    setListAdapter(alertCursorAdapter());
-    LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
-    addAlert.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) {
-        Intent i = new Intent(Alerts.this, NewAlert.class);
-        startActivity(i);
-      }
-    });
-    registerForContextMenu(getListView());
+    if (Alert.isEmpty(this)) {
+      startActivity(new Intent(Alerts.this, Welcome.class));
+      finish();
+    } else {
+      setContentView(R.layout.alerts);
+
+      setListAdapter(alertCursorAdapter());
+      LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
+      addAlert.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+          Intent i = new Intent(Alerts.this, NewAlert.class);
+          startActivity(i);
+        }
+      });
+      registerForContextMenu(getListView());
+    }
   }
 
   @Override
@@ -47,7 +53,7 @@ public class Alerts extends ListActivity {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.context_menu, menu);
   }
-  
+
   @Override
   public boolean onContextItemSelected(MenuItem item) {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
