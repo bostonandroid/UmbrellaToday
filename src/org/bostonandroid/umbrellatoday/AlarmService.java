@@ -55,7 +55,7 @@ public class AlarmService extends WakefulIntentService {
   private Notification buildNotification(int icon, String contentText, long alertId) {
     Notification notification = new Notification(icon, contentText, System.currentTimeMillis());
     notification.setLatestEventInfo(this, getString(R.string.app_name), contentText,
-        PendingIntent.getActivity(this, 0, new Intent(this, EditAlert.class).putExtra("alert_id", alertId), 0));
+        PendingIntent.getActivity(this, 0, new Intent(this, EditAlertActivity.class).putExtra("alert_id", alertId), 0));
     notification.flags |= Notification.FLAG_AUTO_CANCEL;
     return notification;
   }
@@ -66,6 +66,6 @@ public class AlarmService extends WakefulIntentService {
   }
   
   private void showErrorNotification(String contentText, long alarmId) {
-    showNotification(R.drawable.weather_showers, contentText, alarmId);
+    showNotification(R.drawable.weather_showers, contentText, alarmId); // FIXME: use thunder bolt icon
   }
 }

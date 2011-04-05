@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class EditAlert extends PreferenceActivity {
+public class EditAlertActivity extends PreferenceActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
@@ -27,7 +27,7 @@ public class EditAlert extends PreferenceActivity {
         final SavedAlert a = alert; // for the onClick
         ((CheckBoxPreference)findPreference("enable_alert")).setChecked(alert.isEnabled());
         ((TimePreference)findPreference("time")).setTime(TimePreference.formatter().format(alert.alertAt().getTime()));
-        ((TimePreference)findPreference("time")).setSummary(TimePreference.summaryFormatter(EditAlert.this).format(alert.alertAt().getTime()));
+        ((TimePreference)findPreference("time")).setSummary(TimePreference.summaryFormatter(EditAlertActivity.this).format(alert.alertAt().getTime()));
         ((RepeatPreference)findPreference("repeat")).setChoices(alert.repeatDays());
         ((CheckBoxPreference)findPreference("detect_location")).setChecked(alert.isAutolocate());
         ((EditTextPreference)findPreference("location")).setText(alert.location());
@@ -40,7 +40,7 @@ public class EditAlert extends PreferenceActivity {
                 public void run(SavedAlert a) {
                   Calendar nextAt = a.alertAt();
                   if (a.isEnabled())
-                    Toast.makeText(EditAlert.this, "Alert set for " + DateFormat.getDateFormat(EditAlert.this).format(nextAt.getTime()) + " at " + DateFormat.getTimeFormat(EditAlert.this).format(nextAt.getTime()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditAlertActivity.this, "Alert set for " + DateFormat.getDateFormat(EditAlertActivity.this).format(nextAt.getTime()) + " at " + DateFormat.getTimeFormat(EditAlertActivity.this).format(nextAt.getTime()), Toast.LENGTH_LONG).show();
                   finish();
               }}).
               onFailure(new ValueRunner<SavedAlert>() {

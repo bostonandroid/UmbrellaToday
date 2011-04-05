@@ -21,7 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class Alerts extends ListActivity {
+public class AlertsActivity extends ListActivity {
   private CursorAdapter alertCursorAdapter;
   private Cursor alertCursor;
 
@@ -30,25 +30,27 @@ public class Alerts extends ListActivity {
     super.onCreate(savedInstanceState);
     prettyBlank(new Runnable() {
       public void run() {
-      setContentView(R.layout.alerts);
+        setContentView(R.layout.alerts);
 
-      setListAdapter(alertCursorAdapter());
-      LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
-      addAlert.setOnClickListener(new View.OnClickListener() {
-        public void onClick(View v) {
-          Intent i = new Intent(Alerts.this, NewAlert.class);
-          startActivity(i);
-        }
-      });
-      registerForContextMenu(getListView());
-    }});
+        setListAdapter(alertCursorAdapter());
+        LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
+        addAlert.setOnClickListener(new View.OnClickListener() {
+          public void onClick(View v) {
+            startActivity(new Intent(AlertsActivity.this, NewAlertActivity.class));
+          }
+        });
+        registerForContextMenu(getListView());
+      }
+    });
   }
 
   private void prettyBlank(Runnable f) {
     if (Alert.isEmpty(this)) {
-      startActivity(new Intent(Alerts.this, Welcome.class));
+      // if no alerts, display the welcome screen
+      startActivity(new Intent(AlertsActivity.this, WelcomeActivity.class));
       finish();
     } else
+      // we have alerts, set us up the bomb
       f.run();
   }
 
@@ -77,19 +79,19 @@ public class Alerts extends ListActivity {
   private void deleteAlert(long id) {
     Alert.find(this, id).perform(new ValueRunner<SavedAlert>() {
       public void run(SavedAlert a) {
-        a.delete(Alerts.this, new AlarmSetter(Alerts.this));
+        a.delete(AlertsActivity.this, new AlarmSetter(AlertsActivity.this));
       }
     });
-    // FIXME: why doesn't this run automatically?
     prettyBlank(new Runnable() {
       public void run() {
+        // FIXME: why doesn't this run automatically?
         alertCursor().requery();
       }
     });
   }
 
   private void editAlert(long id) {
-    Intent i = new Intent(Alerts.this, EditAlert.class);
+    Intent i = new Intent(AlertsActivity.this, EditAlertActivity.class);
     i.putExtra("alert_id", id);
     startActivity(i);
   }
@@ -128,7 +130,7 @@ public class Alerts extends ListActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
     case R.id.about_button:
-      Intent intent = new Intent(Alerts.this, AboutUmbrellaToday.class);
+      Intent intent = new Intent(AlertsActivity.this, AboutActivity.class);
       startActivity(intent);
       return true;
     default:
