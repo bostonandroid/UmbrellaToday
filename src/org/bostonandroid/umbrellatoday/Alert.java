@@ -12,6 +12,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.util.Log;
+
 public class Alert {
   private Exception errorCanBeNull;
   private Calendar alertAt;
@@ -55,6 +57,15 @@ public class Alert {
     return SavedAlert.find(c);
   }
 
+  public static boolean isEmpty(Context c) {
+    Cursor cursor = all(c);
+    cursor.moveToFirst();
+    int count = cursor.getCount();
+    cursor.close();
+    Log.i("Alert", "alert count: "+count+"");
+    return count == 0;
+  }
+
   Alert(Calendar alertAt, boolean sunday, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, String location, boolean autolocate, boolean enabled) {
     this.alertAt = alertAt;
     this.sunday = sunday;
@@ -68,11 +79,11 @@ public class Alert {
     this.autolocate = autolocate;
     this.enabled = enabled;
   }
-  
+
   public boolean isRepeating() {
     return this.monday || this.tuesday || this.wednesday || this.thursday || this.friday || this.saturday || this.sunday;
   }
-  
+
   public Calendar alertAt() {
     Calendar now = new GregorianCalendar();
     return alertAtAux(alertAtAbsolute(now), now);

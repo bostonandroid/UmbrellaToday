@@ -28,17 +28,28 @@ public class Alerts extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    prettyBlank(new Runnable() {
+      public void run() {
+      setContentView(R.layout.alerts);
 
-    setContentView(R.layout.alerts);
-    setListAdapter(alertCursorAdapter());
-    LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
-    addAlert.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) {
-        Intent i = new Intent(Alerts.this, NewAlert.class);
-        startActivity(i);
-      }
-    });
-    registerForContextMenu(getListView());
+      setListAdapter(alertCursorAdapter());
+      LinearLayout addAlert = (LinearLayout) findViewById(R.id.add_alert);
+      addAlert.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+          Intent i = new Intent(Alerts.this, NewAlert.class);
+          startActivity(i);
+        }
+      });
+      registerForContextMenu(getListView());
+    }});
+  }
+
+  private void prettyBlank(Runnable f) {
+    if (Alert.isEmpty(this)) {
+      startActivity(new Intent(Alerts.this, Welcome.class));
+      finish();
+    } else
+      f.run();
   }
 
   @Override
@@ -47,7 +58,7 @@ public class Alerts extends ListActivity {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.context_menu, menu);
   }
-  
+
   @Override
   public boolean onContextItemSelected(MenuItem item) {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
@@ -70,7 +81,11 @@ public class Alerts extends ListActivity {
       }
     });
     // FIXME: why doesn't this run automatically?
-    alertCursor().requery();
+    prettyBlank(new Runnable() {
+      public void run() {
+        alertCursor().requery();
+      }
+    });
   }
 
   private void editAlert(long id) {

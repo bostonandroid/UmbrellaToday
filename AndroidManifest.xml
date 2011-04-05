@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="org.bostonandroid.umbrellatoday" android:versionCode="1"
-  android:versionName="1.0">
+  package="org.bostonandroid.umbrellatoday" android:versionCode="3"
+  android:versionName="1.2">
+  
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-sdk android:minSdkVersion="4" />
+  
   <application android:label="@string/app_name"
-    android:name="UmbrellaTodayApplication">
+    android:name="UmbrellaTodayApplication"
+    android:icon="@drawable/icon">
     <activity android:name="AboutUmbrellaToday" android:label="@string/about_umbrella_today" />
 
-    <activity android:name="Alerts" android:label="@string/app_name"
-      android:icon="@drawable/icon">
+    <activity android:name="Alerts" android:label="@string/app_name">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+    
     <activity android:name="NewAlert" android:label="@string/new_alert" />
+    
     <activity android:name="EditAlert" android:label="@string/edit_alert" />
 
     <receiver android:name=".Widget" android:label="@string/widget_name">
@@ -23,21 +32,23 @@
       <meta-data android:name="android.appwidget.provider"
         android:resource="@xml/widget" />
     </receiver>
-    <receiver android:name="OnBoot">
-      <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED" />
-        <category android:name="android.intent.category.HOME" />
-      </intent-filter>
-    </receiver>
+
+    <activity android:name="Welcome" android:label="@string/app_name" />
+
+	<receiver android:name="OnBoot">
+		<intent-filter>
+			<action android:name="android.intent.action.BOOT_COMPLETED" />
+		</intent-filter>
+		<intent-filter>
+			<action android:name="android.intent.action.TIMEZONE_CHANGED" />
+		</intent-filter>
+		<intent-filter>
+			<action android:name="android.intent.action.TIME_SET" />
+		</intent-filter>
+	</receiver>
+    
     <receiver android:name="AlarmReceiver" />
 
-    <service android:name=".Widget$UpdateService" />
     <service android:name="AlarmService" />
-
   </application>
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.WAKE_LOCK" />
-  <uses-sdk android:minSdkVersion="4" />
-</manifest> 
+</manifest>

@@ -14,12 +14,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.content.Intent;
 
 public class NewAlert extends PreferenceActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    addPreferencesFromResource(R.xml.new_alert);
+    addPreferencesFromResource(R.xml.alert);
     setContentView(R.layout.new_alert);
     
     Button nextButton = (Button)findViewById(R.id.save_alert);
@@ -31,6 +32,7 @@ public class NewAlert extends PreferenceActivity {
               Calendar nextAt = a.alertAt();
               if (a.isEnabled())
                 Toast.makeText(NewAlert.this, "Alert set for " + DateFormat.getDateFormat(NewAlert.this).format(nextAt.getTime()) + " at " + DateFormat.getTimeFormat(NewAlert.this).format(nextAt.getTime()), Toast.LENGTH_LONG).show();
+              startActivity(new Intent(NewAlert.this, Alerts.class));
               finish();
           }}).
           onFailure(new ValueRunner<Alert>() {
@@ -40,6 +42,9 @@ public class NewAlert extends PreferenceActivity {
           }});
       }
     });
+
+    // Start the user off by making them pick a time
+    getPreferenceScreen().onItemClick(null, null, 1, 0);
   }
 
   private AlertOrError saveAlert() {

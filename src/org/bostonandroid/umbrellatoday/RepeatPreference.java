@@ -8,6 +8,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.ListPreference;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.widget.ListView;
@@ -26,8 +27,21 @@ public class RepeatPreference extends ListPreference {
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             this.currentChoices = new ArrayList<String>(this.newChoices);
+            setSummary(summary());
             this.newChoices.clear();
         }
+    }
+
+    private String summary() {
+      String summary = TextUtils.join(",", this.currentChoices);
+      if (summary == "")
+        return defaultValue();
+      else
+        return summary;
+    }
+
+    protected String defaultValue() {
+      return "Never";
     }
 
     @Override
