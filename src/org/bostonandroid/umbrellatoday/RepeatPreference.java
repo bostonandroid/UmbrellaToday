@@ -8,13 +8,10 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.ListPreference;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.widget.ListView;
-import android.app.Dialog;
-import android.text.TextUtils;
-
-import android.util.Log;
 
 public class RepeatPreference extends ListPreference {
     private List<String> currentChoices;

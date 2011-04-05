@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical" android:layout_width="fill_parent"
-  android:layout_height="fill_parent" android:background="#bcd7f4">
-  <ScrollView android:layout_width="fill_parent"
-    android:layout_height="wrap_content" android:layout_marginLeft="10dip"
-    android:layout_marginTop="10dip">
-    <TextView android:layout_width="fill_parent"
-      android:layout_height="wrap_content" android:id="@+id/about"
-      android:text="@string/about_text" android:textSize="20sp"
-      android:textColor="#133D5B"
-      android:layout_marginRight="10dip" />
-  </ScrollView>
-</LinearLayout>
+<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:id="@+id/about" android:scrollbars="none" />

@@ -18,7 +18,7 @@ public class EditAlert extends PreferenceActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    addPreferencesFromResource(R.xml.new_alert);
+    addPreferencesFromResource(R.xml.alert);
     setContentView(R.layout.edit_alert);
     
     long alert_id = getIntent().getExtras().getLong("alert_id");

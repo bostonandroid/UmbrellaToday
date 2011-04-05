@@ -20,7 +20,7 @@ public class NewAlert extends PreferenceActivity {
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
-    addPreferencesFromResource(R.xml.new_alert);
+    addPreferencesFromResource(R.xml.alert);
     setContentView(R.layout.new_alert);
     
     Button nextButton = (Button)findViewById(R.id.save_alert);
