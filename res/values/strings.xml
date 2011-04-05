@@ -12,6 +12,8 @@
     <string name="new_alert">New Alert</string>
     <string name="save_alert">Add Alert</string>
     <string name="update_alert">Update Alert</string>
+    <string name="widget_name">Umbrella Today Widget</string>
+    <string name="widget_loading">Loading!?!</string>
     <string name="delete_alert">Delete Alert</string>
     <string name="edit_alert">Edit Alert</string>
     <string name="enable_alert">Enable Alert</string>
